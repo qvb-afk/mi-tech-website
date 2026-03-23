@@ -1,0 +1,638 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>小米技术 - 开源生态</title>
+    <!-- 外部资源 -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <!-- Tailwind自定义配置（复用小米品牌色） -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        xiaomi: {
+                            orange: '#FF6900', // 小米橙主色
+                            orangeLight: '#FF8A00', // 浅橙
+                            dark: '#111111', // 深黑背景
+                            gray: '#F5F5F5', // 浅灰文字
+                            grayDark: '#999999', // 深灰辅助文字
+                            card: '#1A1A1A', // 卡片背景
+                            border: '#333333' // 边框色
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['PingFang SC', 'Microsoft YaHei', 'sans-serif'] // 小米官方中文字体
+                    },
+                    boxShadow: {
+                        'mi': '0 2px 8px rgba(0,0,0,0.15)', // 小米极简阴影
+                        'mi-hover': '0 8px 24px rgba(255,105,0,0.2)' // 卡片hover阴影
+                    }
+                }
+            }
+        }
+    </script>
+    <style type="text/tailwindcss">
+        @layer utilities {
+            /* 通用工具类（复用） */
+            .mi-container {
+                @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
+            }
+            .mi-card {
+                @apply bg-xiaomi-card rounded-lg border border-xiaomi-border transition-all hover:shadow-mi-hover hover:border-xiaomi-orange/30;
+            }
+            .mi-search-input {
+                @apply bg-xiaomi-dark border border-xiaomi-border rounded-lg px-4 py-2 text-white outline-none focus:border-xiaomi-orange w-full md:w-64;
+            }
+            /* 开源生态页面专用样式 */
+            .opensource-banner {
+                @apply pt-32 pb-20 bg-xiaomi-dark relative;
+            }
+            .opensource-banner::after {
+                content: '';
+                @apply absolute top-0 left-0 w-full h-full bg-black/30;
+            }
+            /* 内容区块样式 */
+            .content-section {
+                @apply py-16 bg-black;
+            }
+            .section-title {
+                @apply text-3xl md:text-4xl font-bold mb-12 relative inline-block;
+            }
+            .section-title::after {
+                content: '';
+                @apply absolute left-0 bottom-[-8px] w-1/3 h-1 bg-xiaomi-orange rounded-full;
+            }
+            .subsection-title {
+                @apply text-2xl font-bold mb-6 text-white;
+            }
+            .content-block {
+                @apply mb-20;
+            }
+            /* 开源理念卡片样式 */
+            .principle-cards {
+                @apply grid md:grid-cols-2 lg:grid-cols-5 gap-6 mt-8;
+            }
+            .principle-card {
+                @apply mi-card p-6 text-center hover:translate-y-[-4px];
+            }
+            .principle-icon {
+                @apply w-16 h-16 bg-xiaomi-orange/10 rounded-full flex items-center justify-center mx-auto mb-4 text-2xl text-xiaomi-orange;
+            }
+            .principle-title {
+                @apply text-lg font-bold mb-2 text-white;
+            }
+            .principle-desc {
+                @apply text-xiaomi-grayDark text-sm;
+            }
+            /* 开源成果样式 */
+            .achievement-stats {
+                @apply grid md:grid-cols-3 gap-8 mt-8;
+            }
+            .achievement-card {
+                @apply mi-card p-8 text-center hover:translate-y-[-2px];
+            }
+            .achievement-number {
+                @apply text-4xl font-bold text-xiaomi-orange mb-2;
+            }
+            .achievement-label {
+                @apply text-xiaomi-grayDark;
+            }
+            /* 重点开源项目样式 */
+            .project-list {
+                @apply grid md:grid-cols-2 gap-8 mt-8;
+            }
+            .project-card {
+                @apply mi-card p-8 hover:translate-y-[-4px];
+            }
+            .project-title {
+                @apply text-xl font-bold mb-4 text-white flex items-center gap-3;
+            }
+            .project-desc {
+                @apply text-xiaomi-grayDark mb-4;
+            }
+            .project-tag {
+                @apply inline-block px-3 py-1 rounded-full bg-xiaomi-orange/10 text-xiaomi-orange text-xs mr-2 mb-2;
+            }
+            /* 开源事件/合作单位/知识库样式 */
+            .event-list, .partner-list, .knowledge-list {
+                @apply mi-card p-8 mt-8;
+            }
+            .event-item, .partner-item, .knowledge-item {
+                @apply border-b border-xiaomi-border py-4 last:border-0;
+            }
+            .event-date {
+                @apply text-xiaomi-orange font-medium mb-2;
+            }
+            .event-title {
+                @apply text-white font-medium mb-2 hover:text-xiaomi-orange transition-colors cursor-pointer;
+            }
+            .event-desc {
+                @apply text-xiaomi-grayDark text-sm;
+            }
+            .partner-logo {
+                @apply w-24 h-24 bg-white/10 rounded-lg flex items-center justify-center mb-3 mx-auto text-white text-sm;
+            }
+            /* 外部链接样式 */
+            .external-link {
+                pointer-events: auto !important;
+                cursor: pointer !important;
+            }
+        }
+    </style>
+    <style>
+        /* 基础样式（复用） */
+        body {
+            scroll-behavior: smooth;
+            background-color: #000 !important;
+            color: #fff !important;
+            font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+        /* 极简滚动条 */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #111;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #FF6900;
+            border-radius: 3px;
+        }
+        /* 导航栏滚动渐变 */
+        .nav-scrolled {
+            background-color: rgba(0,0,0,0.95) !important;
+            backdrop-filter: blur(8px);
+            border-bottom: 1px solid #333;
+        }
+        /* 强制还原默认样式 */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        h1, h2, h3, h4, h5, h6 {
+            color: #fff;
+        }
+        p {
+            color: #999;
+        }
+    </style>
+</head>
+<body>
+    <!-- 导航栏（统一全站跳转路径） -->
+    <nav id="mi-nav" class="fixed w-full z-50 py-4 bg-black/80 backdrop-blur-md transition-all duration-300">
+        <div class="mi-container flex justify-between items-center">
+            <!-- 品牌LOGO -->
+            <a href="index.html" class="flex items-center gap-2">
+                <div class="w-8 h-8 rounded-full bg-xiaomi-orange flex items-center justify-center">
+                    <i class="fa fa-microchip text-white text-sm"></i>
+                </div>
+                <span class="text-xl font-bold">小米技术</span>
+            </a>
+
+            <!-- 桌面端导航 - 统一全站链接 -->
+            <div class="hidden md:flex items-center gap-8">
+                <a href="index.html" class="text-sm hover:text-xiaomi-orange transition-colors">首页</a>
+                <a href="tech.html" class="text-sm hover:text-xiaomi-orange transition-colors">技术布局</a>
+                <a href="papers.html" class="text-sm hover:text-xiaomi-orange transition-colors">博客&论文</a>
+                <a href="opensource.html" class="text-sm text-xiaomi-orange transition-colors">开源生态</a>
+                <a href="tech-event.html" class="text-sm hover:text-xiaomi-orange transition-colors">技术活动</a>
+                <a href="https://utc.xiaomi.com/home" target="_blank" class="text-sm hover:text-xiaomi-orange transition-colors external-link">高校合作</a>
+                <a href="industry.html" class="text-sm hover:text-xiaomi-orange transition-colors">行业引领</a>
+                <!-- 搜索框 -->
+                <div class="relative">
+                    <input type="text" class="mi-search-input pr-8" placeholder="搜索技术动态...">
+                    <i class="fa fa-search absolute right-3 top-1/2 -translate-y-1/2 text-xiaomi-grayDark"></i>
+                </div>
+            </div>
+
+            <!-- 移动端菜单按钮 -->
+            <button id="menu-btn" class="md:hidden text-white text-xl">
+                <i class="fa fa-bars"></i>
+            </button>
+        </div>
+
+        <!-- 移动端导航菜单 - 统一全站链接 -->
+        <div id="mobile-menu" class="md:hidden hidden bg-xiaomi-dark border-t border-xiaomi-border">
+            <div class="mi-container py-4 flex flex-col gap-4">
+                <!-- 移动端搜索框 -->
+                <div class="relative">
+                    <input type="text" class="mi-search-input pr-8" placeholder="搜索技术动态...">
+                    <i class="fa fa-search absolute right-3 top-1/2 -translate-y-1/2 text-xiaomi-grayDark"></i>
+                </div>
+                <a href="index.html" class="py-2 hover:text-xiaomi-orange transition-colors">首页</a>
+                <a href="tech.html" class="py-2 hover:text-xiaomi-orange transition-colors">技术布局</a>
+                <a href="papers.html" class="py-2 hover:text-xiaomi-orange transition-colors">博客&论文</a>
+                <a href="opensource.html" class="py-2 text-xiaomi-orange transition-colors">开源生态</a>
+                <a href="tech-event.html" class="py-2 hover:text-xiaomi-orange transition-colors">技术活动</a>
+                <a href="https://utc.xiaomi.com/home" target="_blank" class="py-2 hover:text-xiaomi-orange transition-colors external-link">高校合作</a>
+                <a href="industry.html" class="py-2 hover:text-xiaomi-orange transition-colors">行业引领</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 开源生态页面Banner -->
+    <section class="opensource-banner">
+        <div class="mi-container relative z-10">
+            <h1 class="text-[clamp(2rem,5vw,3.5rem)] font-bold mb-6">开源生态</h1>
+            <p class="text-lg max-w-4xl text-xiaomi-grayDark">
+                拥抱开源是小米的工程师文化，我们不仅要站在巨人肩膀上，同时要给巨人指方向。<br>
+                小米致力于构建开放、协作、共赢的开源生态体系，推动技术创新与行业发展。
+            </p>
+        </div>
+    </section>
+
+    <!-- 核心内容区 -->
+    <section class="content-section">
+        <div class="mi-container">
+            <!-- 1. 开源理念/原则 -->
+            <div class="content-block">
+                <h2 class="section-title">开源理念/原则</h2>
+                <div class="mi-card p-8 mb-8">
+                    <h3 class="text-xl font-bold mb-4 text-white">小米开源文化</h3>
+                    <p class="text-xiaomi-grayDark mb-4">拥抱开源是小米的工程师文化。</p>
+                    <h3 class="text-xl font-bold mb-4 text-white">小米开源理念</h3>
+                    <p class="text-xiaomi-grayDark">我们不仅要站在巨人肩膀上，同时要给巨人指方向。</p>
+                </div>
+                
+                <div class="principle-cards">
+                    <!-- 快 -->
+                    <div class="principle-card">
+                        <div class="principle-icon">
+                            <i class="fa fa-bolt"></i>
+                        </div>
+                        <h4 class="principle-title">快</h4>
+                        <p class="principle-desc">高效迭代，快速创新</p>
+                    </div>
+                    <!-- 不重复造轮子 -->
+                    <div class="principle-card">
+                        <div class="principle-icon">
+                            <i class="fa fa-refresh"></i>
+                        </div>
+                        <h4 class="principle-title">不重复</h4>
+                        <p class="principle-desc">不重复造轮子，善用现有成果</p>
+                    </div>
+                    <!-- 不用则已 要用则精 -->
+                    <div class="principle-card">
+                        <div class="principle-icon">
+                            <i class="fa fa-diamond"></i>
+                        </div>
+                        <h4 class="principle-title">不用则已</h4>
+                        <p class="principle-desc">不用则已，要用则精</p>
+                    </div>
+                    <!-- 坚持开放与共享 -->
+                    <div class="principle-card">
+                        <div class="principle-icon">
+                            <i class="fa fa-share-alt"></i>
+                        </div>
+                        <h4 class="principle-title">坚持</h4>
+                        <p class="principle-desc">坚持开放与共享</p>
+                    </div>
+                    <!-- 极力推出自己的committer -->
+                    <div class="principle-card">
+                        <div class="principle-icon">
+                            <i class="fa fa-user-circle"></i>
+                        </div>
+                        <h4 class="principle-title">极力推出</h4>
+                        <p class="principle-desc">极力推出自己的committer</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 2. 开源成果 -->
+            <div class="content-block">
+                <h2 class="section-title">开源成果</h2>
+                <div class="achievement-stats">
+                    <!-- 开源项目总数 -->
+                    <div class="achievement-card">
+                        <div class="achievement-number">200+</div>
+                        <div class="achievement-label">开源项目总数</div>
+                    </div>
+                    <!-- 项目成果 -->
+                    <div class="achievement-card">
+                        <div class="achievement-number">5000+</div>
+                        <div class="achievement-label">GitHub Star总数</div>
+                    </div>
+                    <!-- 合作单位 -->
+                    <div class="achievement-card">
+                        <div class="achievement-number">100+</div>
+                        <div class="achievement-label">生态合作单位</div>
+                    </div>
+                </div>
+                
+                <div class="mt-12">
+                    <p class="text-xiaomi-grayDark">
+                        小米开源生态已覆盖AI、操作系统、芯片、云计算、物联网等多个技术领域，
+                        累计向社区贡献代码超百万行，培养了数百名开源贡献者，
+                        与全球开发者共同推动技术创新与产业升级。
+                    </p>
+                </div>
+            </div>
+
+            <!-- 3. 重点开源项目 -->
+            <div class="content-block">
+                <h2 class="section-title">重点开源项目</h2>
+                <div class="project-list">
+                    <!-- MiMO系列 -->
+                    <div class="project-card">
+                        <h3 class="project-title">
+                            <i class="fa fa-brain text-xiaomi-orange"></i> MiMO系列
+                        </h3>
+                        <div class="flex flex-wrap mb-4">
+                            <span class="project-tag">AI大模型</span>
+                            <span class="project-tag">端侧部署</span>
+                            <span class="project-tag">多模态</span>
+                        </div>
+                        <p class="project-desc">
+                            MiMO（Mi AI Model）系列是小米自研的端侧AI大模型家族，
+                            涵盖7B、13B、70B等不同规模的模型版本，针对移动设备进行深度优化，
+                            具备轻量化、高性能、低功耗的特点，已广泛应用于小米手机、平板、汽车等产品中。
+                        </p>
+                        <p class="text-sm text-xiaomi-grayDark">
+                            开源仓库：<a href="#" class="text-xiaomi-orange hover:underline external-link">github.com/Xiaomi/MiMO</a>
+                        </p>
+                    </div>
+                    
+                    <!-- openvela -->
+                    <div class="project-card">
+                        <h3 class="project-title">
+                            <i class="fa fa-cloud text-xiaomi-orange"></i> openvela
+                        </h3>
+                        <div class="flex flex-wrap mb-4">
+                            <span class="project-tag">云原生</span>
+                            <span class="project-tag">持续交付</span>
+                            <span class="project-tag">DevOps</span>
+                        </div>
+                        <p class="project-desc">
+                            openvela是小米开源的云原生持续交付平台，
+                            基于Kubernetes构建，提供从代码提交到应用发布的全流程自动化能力，
+                            支持多环境、多集群部署，已在小米内部大规模应用，赋能研发提效。
+                        </p>
+                        <p class="text-sm text-xiaomi-grayDark">
+                            开源仓库：<a href="#" class="text-xiaomi-orange hover:underline external-link">github.com/Xiaomi/openvela</a>
+                        </p>
+                    </div>
+                    
+                    <!-- Miloco -->
+                    <div class="project-card">
+                        <h3 class="project-title">
+                            <i class="fa fa-headphones text-xiaomi-orange"></i> Miloco
+                        </h3>
+                        <div class="flex flex-wrap mb-4">
+                            <span class="project-tag">音频算法</span>
+                            <span class="project-tag">声学处理</span>
+                            <span class="project-tag">空间音频</span>
+                        </div>
+                        <p class="project-desc">
+                            Miloco（Mi Audio Codec）是小米开源的音频处理算法库，
+                            包含降噪、回声消除、空间音频、音效增强等核心算法，
+                            针对小米硬件设备深度优化，提供专业级的音频处理能力。
+                        </p>
+                        <p class="text-sm text-xiaomi-grayDark">
+                            开源仓库：<a href="#" class="text-xiaomi-orange hover:underline external-link">github.com/Xiaomi/Miloco</a>
+                        </p>
+                    </div>
+                    
+                    <!-- MiDaSheng (计划开源) -->
+                    <div class="project-card">
+                        <h3 class="project-title">
+                            <i class="fa fa-code-fork text-xiaomi-orange"></i> MiDaSheng
+                        </h3>
+                        <div class="flex flex-wrap mb-4">
+                            <span class="project-tag">操作系统</span>
+                            <span class="project-tag">人车家生态</span>
+                            <span class="project-tag">计划开源</span>
+                        </div>
+                        <p class="project-desc">
+                            MiDaSheng是小米面向全生态的操作系统开源计划，
+                            计划开源MiCar OS（车载操作系统）、澎湃OS（HyperOS）等核心系统组件，
+                            构建统一的跨设备操作系统生态，赋能开发者和合作伙伴。
+                        </p>
+                        <p class="text-sm text-xiaomi-grayDark">
+                            开源计划：2025年Q3逐步开放核心组件
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 4. 开源大事件 -->
+            <div class="content-block">
+                <h2 class="section-title">开源大事件</h2>
+                <div class="event-list">
+                    <!-- 事件1 -->
+                    <div class="event-item">
+                        <div class="event-date">2025-01</div>
+                        <div class="event-title">小米加入Linux基金会白金会员</div>
+                        <div class="event-desc">
+                            小米正式成为Linux基金会白金会员，将加大对Linux内核、开源社区的贡献，
+                            推动操作系统领域的技术创新与生态建设。
+                        </div>
+                    </div>
+                    <!-- 事件2 -->
+                    <div class="event-item">
+                        <div class="event-date">2024-09</div>
+                        <div class="event-title">MiMO-7B大模型正式开源</div>
+                        <div class="event-desc">
+                            小米发布并开源MiMO-7B端侧大模型，成为国内首家开源70亿参数级端侧大模型的手机厂商，
+                            推动AI技术在端侧设备的普及应用。
+                        </div>
+                    </div>
+                    <!-- 事件3 -->
+                    <div class="event-item">
+                        <div class="event-date">2024-05</div>
+                        <div class="event-title">小米开源委员会正式成立</div>
+                        <div class="event-desc">
+                            成立小米开源委员会，统筹公司开源战略，建立完善的开源治理体系，
+                            规范开源项目管理，培养内部开源文化。
+                        </div>
+                    </div>
+                    <!-- 事件4 -->
+                    <div class="event-item">
+                        <div class="event-date">2023-12</div>
+                        <div class="event-title">openvela 1.0正式发布</div>
+                        <div class="event-desc">
+                            小米云原生持续交付平台openvela 1.0版本正式发布并开源，
+                            累计已有数百家企业采用该平台提升研发效率。
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 5. 开源合作单位 -->
+            <div class="content-block">
+                <h2 class="section-title">开源合作单位</h2>
+                <div class="partner-list">
+                    <div class="grid md:grid-cols-4 gap-8">
+                        <!-- 合作单位1 -->
+                        <div class="partner-item text-center">
+                            <div class="partner-logo">
+                                Linux基金会
+                            </div>
+                            <p class="text-white font-medium">Linux Foundation</p>
+                        </div>
+                        <!-- 合作单位2 -->
+                        <div class="partner-item text-center">
+                            <div class="partner-logo">
+                                Apache基金会
+                            </div>
+                            <p class="text-white font-medium">Apache Software Foundation</p>
+                        </div>
+                        <!-- 合作单位3 -->
+                        <div class="partner-item text-center">
+                            <div class="partner-logo">
+                                CNCF
+                            </div>
+                            <p class="text-white font-medium">云原生计算基金会</p>
+                        </div>
+                        <!-- 合作单位4 -->
+                        <div class="partner-item text-center">
+                            <div class="partner-logo">
+                                OpenAtom
+                            </div>
+                            <p class="text-white font-medium">开放原子开源基金会</p>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-8 text-xiaomi-grayDark">
+                        小米与全球主流开源基金会、高校、科研机构、科技企业建立了深度合作关系，
+                        共同推动开源技术的创新与落地，构建开放共赢的技术生态。
+                    </div>
+                </div>
+            </div>
+
+            <!-- 6. 小米开源委员会知识库 -->
+            <div class="content-block">
+                <h2 class="section-title">小米开源委员会知识库</h2>
+                <div class="knowledge-list">
+                    <div class="knowledge-item">
+                        <h3 class="text-lg font-bold text-white mb-3">开源治理规范</h3>
+                        <p class="text-xiaomi-grayDark">
+                            涵盖开源项目立项、代码贡献、知识产权管理、合规审查等全流程规范，
+                            确保小米开源项目符合国际开源标准和法律法规要求。
+                        </p>
+                    </div>
+                    <div class="knowledge-item">
+                        <h3 class="text-lg font-bold text-white mb-3">开源贡献指南</h3>
+                        <p class="text-xiaomi-grayDark">
+                            面向内部员工和外部开发者的贡献指南，包括代码提交规范、PR流程、
+                            代码评审标准、社区沟通机制等内容。
+                        </p>
+                    </div>
+                    <div class="knowledge-item">
+                        <h3 class="text-lg font-bold text-white mb-3">开源技术文档</h3>
+                        <p class="text-xiaomi-grayDark">
+                            包含各开源项目的技术文档、API手册、部署指南、最佳实践等内容，
+                            帮助开发者快速上手和使用小米开源技术。
+                        </p>
+                    </div>
+                    <div class="knowledge-item">
+                        <h3 class="text-lg font-bold text-white mb-3">开源培训体系</h3>
+                        <p class="text-xiaomi-grayDark">
+                            建立从入门到进阶的开源培训课程，培养员工的开源意识和贡献能力，
+                            定期举办开源技术分享和社区活动。
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 页脚（统一全站样式） -->
+    <footer class="bg-xiaomi-dark border-t border-xiaomi-border py-10">
+        <div class="mi-container">
+            <!-- 顶部LOGO -->
+            <div class="flex justify-center items-center gap-2 mb-8">
+                <div class="w-8 h-8 rounded-full bg-xiaomi-orange flex items-center justify-center">
+                    <i class="fa fa-microchip text-white text-sm"></i>
+                </div>
+                <span class="text-xl font-bold">小米技术</span>
+            </div>
+
+            <!-- Follow us 双微二维码 -->
+            <div class="max-w-md mx-auto mb-8">
+                <h3 class="text-center font-medium mb-6">Follow us 关注我们</h3>
+                <div class="grid grid-cols-2 gap-8">
+                    <!-- 微信二维码 -->
+                    <div class="text-center">
+                        <div class="w-32 h-32 bg-white rounded-lg mx-auto flex items-center justify-center mb-2">
+                            <span class="text-xiaomi-dark text-sm">微信二维码</span>
+                        </div>
+                        <p class="text-xiaomi-grayDark text-sm">小米技术公众号</p>
+                    </div>
+                    <!-- 微博二维码 -->
+                    <div class="text-center">
+                        <div class="w-32 h-32 bg-white rounded-lg mx-auto flex items-center justify-center mb-2">
+                            <span class="text-xiaomi-dark text-sm">微博二维码</span>
+                        </div>
+                        <p class="text-xiaomi-grayDark text-sm">小米技术官方微博</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 版权信息 -->
+            <div class="text-center">
+                <p class="text-xiaomi-grayDark text-xs">© 2025 小米集团 保留所有权利</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- JavaScript -->
+    <script>
+        // 导航栏滚动效果
+        const nav = document.getElementById('mi-nav');
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 50) {
+                nav.classList.add('nav-scrolled');
+            } else {
+                nav.classList.remove('nav-scrolled');
+            }
+        });
+
+        // 移动端菜单切换
+        const menuBtn = document.getElementById('menu-btn');
+        const mobileMenu = document.getElementById('mobile-menu');
+        const menuIcon = menuBtn.querySelector('i');
+        menuBtn.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+            if (menuIcon.classList.contains('fa-bars')) {
+                menuIcon.classList.replace('fa-bars', 'fa-times');
+            } else {
+                menuIcon.classList.replace('fa-times', 'fa-bars');
+            }
+        });
+
+        // 移动端菜单点击后关闭（排除外部链接）
+        const mobileLinks = mobileMenu.querySelectorAll('a');
+        mobileLinks.forEach(link => {
+            link.addEventListener('click', () => {
+                if (!link.classList.contains('external-link')) {
+                    mobileMenu.classList.add('hidden');
+                    menuIcon.classList.replace('fa-times', 'fa-bars');
+                }
+            });
+        });
+
+        // 开源事件标题点击交互
+        document.querySelectorAll('.event-title').forEach(title => {
+            title.addEventListener('click', function() {
+                const eventDate = this.parentElement.querySelector('.event-date').textContent;
+                alert(`查看${eventDate}「${this.textContent}」详细内容`);
+            });
+        });
+
+        // 开源项目链接交互
+        document.querySelectorAll('.project-card a').forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                alert(`正在访问：${this.textContent}`);
+            });
+        });
+    </script>
+</body>
+</html>

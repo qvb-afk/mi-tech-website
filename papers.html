@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>小米技术 - 博客&论文</title>
+    <!-- 外部资源 -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <!-- Tailwind自定义配置（复用小米品牌色） -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        xiaomi: {
+                            orange: '#FF6900', // 小米橙主色
+                            orangeLight: '#FF8A00', // 浅橙
+                            dark: '#111111', // 深黑背景
+                            gray: '#F5F5F5', // 浅灰文字
+                            grayDark: '#999999', // 深灰辅助文字
+                            card: '#1A1A1A', // 卡片背景
+                            border: '#333333' // 边框色
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['PingFang SC', 'Microsoft YaHei', 'sans-serif'] // 小米官方中文字体
+                    },
+                    boxShadow: {
+                        'mi': '0 2px 8px rgba(0,0,0,0.15)', // 小米极简阴影
+                        'mi-hover': '0 8px 24px rgba(255,105,0,0.2)' // 卡片hover阴影
+                    }
+                }
+            }
+        }
+    </script>
+    <style type="text/tailwindcss">
+        @layer utilities {
+            /* 通用工具类（复用） */
+            .mi-container {
+                @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
+            }
+            .mi-card {
+                @apply bg-xiaomi-card rounded-lg border border-xiaomi-border transition-all hover:shadow-mi hover:border-xiaomi-orange/30;
+            }
+            .mi-search-input {
+                @apply bg-xiaomi-dark border border-xiaomi-border rounded-lg px-4 py-2 text-white outline-none focus:border-xiaomi-orange w-full md:w-64;
+            }
+            /* 博客&论文页面专用样式 */
+            .blog-paper-banner {
+                @apply pt-32 pb-20 bg-xiaomi-dark relative;
+            }
+            .blog-paper-banner::after {
+                content: '';
+                @apply absolute top-0 left-0 w-full h-full bg-black/30;
+            }
+            /* 内容列表样式 */
+            .content-section {
+                @apply py-16 bg-black;
+            }
+            .content-tabs {
+                @apply flex border-b border-xiaomi-border mb-12;
+            }
+            .content-tab {
+                @apply px-6 py-4 text-lg font-medium relative transition-colors;
+            }
+            .content-tab.active {
+                @apply text-xiaomi-orange;
+            }
+            .content-tab.active::after {
+                content: '';
+                @apply absolute bottom-0 left-0 w-full h-1 bg-xiaomi-orange;
+            }
+            /* 博客卡片样式 */
+            .blog-list {
+                @apply grid md:grid-cols-2 lg:grid-cols-3 gap-8;
+            }
+            .blog-card {
+                @apply mi-card p-8 hover:translate-y-[-4px];
+            }
+            .blog-card-tag {
+                @apply inline-block px-3 py-1 rounded-full bg-xiaomi-orange/10 text-xiaomi-orange text-xs mb-4;
+            }
+            .blog-card-title {
+                @apply text-xl font-bold mb-4 text-white hover:text-xiaomi-orange transition-colors;
+            }
+            .blog-card-desc {
+                @apply text-xiaomi-grayDark mb-6 line-clamp-3;
+            }
+            .blog-card-meta {
+                @apply flex justify-between items-center text-sm text-xiaomi-grayDark;
+            }
+            /* 论文卡片样式 */
+            .paper-list {
+                @apply space-y-6;
+            }
+            .paper-card {
+                @apply mi-card p-8 hover:translate-y-[-2px];
+            }
+            .paper-card-title {
+                @apply text-xl font-bold mb-3 text-white;
+            }
+            .paper-card-authors {
+                @apply text-xiaomi-grayDark mb-4;
+            }
+            .paper-card-journal {
+                @apply text-sm text-xiaomi-orange mb-4;
+            }
+            .paper-card-abstract {
+                @apply text-xiaomi-grayDark mb-6 line-clamp-2;
+            }
+            .paper-card-links {
+                @apply flex gap-4;
+            }
+            .paper-card-link {
+                @apply flex items-center gap-2 text-sm hover:text-xiaomi-orange transition-colors;
+            }
+            /* 分页样式 */
+            .pagination {
+                @apply flex justify-center gap-2 mt-16;
+            }
+            .pagination-item {
+                @apply w-10 h-10 flex items-center justify-center rounded-lg border border-xiaomi-border hover:border-xiaomi-orange hover:text-xiaomi-orange transition-colors;
+            }
+            .pagination-item.active {
+                @apply bg-xiaomi-orange text-white border-xiaomi-orange;
+            }
+            /* 外部链接样式（修复跳转） */
+            .external-link {
+                pointer-events: auto !important;
+                cursor: pointer !important;
+            }
+        }
+    </style>
+    <style>
+        /* 基础样式（复用） */
+        body {
+            scroll-behavior: smooth;
+            background-color: #000 !important;
+            color: #fff !important;
+            font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+        /* 极简滚动条 */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #111;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #FF6900;
+            border-radius: 3px;
+        }
+        /* 导航栏滚动渐变 */
+        .nav-scrolled {
+            background-color: rgba(0,0,0,0.95) !important;
+            backdrop-filter: blur(8px);
+            border-bottom: 1px solid #333;
+        }
+        /* 强制还原默认样式 */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        h1, h2, h3, h4, h5, h6 {
+            color: #fff;
+        }
+        p {
+            color: #999;
+        }
+        /* 文本截断 */
+        .line-clamp-2 {
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+        .line-clamp-3 {
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+    </style>
+</head>
+<body>
+    <!-- 导航栏（统一全站跳转路径） -->
+    <nav id="mi-nav" class="fixed w-full z-50 py-4 bg-black/80 backdrop-blur-md transition-all duration-300">
+        <div class="mi-container flex justify-between items-center">
+            <!-- 品牌LOGO -->
+            <a href="index.html" class="flex items-center gap-2">
+                <div class="w-8 h-8 rounded-full bg-xiaomi-orange flex items-center justify-center">
+                    <i class="fa fa-microchip text-white text-sm"></i>
+                </div>
+                <span class="text-xl font-bold">小米技术</span>
+            </a>
+
+            <!-- 桌面端导航 - 修正所有跳转路径 -->
+            <div class="hidden md:flex items-center gap-8">
+                <a href="index.html" class="text-sm hover:text-xiaomi-orange transition-colors">首页</a>
+                <a href="tech.html" class="text-sm hover:text-xiaomi-orange transition-colors">技术布局</a>
+                <a href="papers.html" class="text-sm text-xiaomi-orange transition-colors">博客&论文</a>
+                <a href="opensource.html" class="text-sm hover:text-xiaomi-orange transition-colors">开源生态</a>
+                <a href="tech-event.html" class="text-sm hover:text-xiaomi-orange transition-colors">技术活动</a>
+                <a href="https://utc.xiaomi.com/home" target="_blank" class="text-sm hover:text-xiaomi-orange transition-colors external-link">高校合作</a>
+                <a href="industry.html" class="text-sm hover:text-xiaomi-orange transition-colors">行业引领</a>
+                <!-- 搜索框 -->
+                <div class="relative">
+                    <input type="text" class="mi-search-input pr-8" placeholder="搜索技术动态...">
+                    <i class="fa fa-search absolute right-3 top-1/2 -translate-y-1/2 text-xiaomi-grayDark"></i>
+                </div>
+            </div>
+
+            <!-- 移动端菜单按钮 -->
+            <button id="menu-btn" class="md:hidden text-white text-xl">
+                <i class="fa fa-bars"></i>
+            </button>
+        </div>
+
+        <!-- 移动端导航菜单 - 修正所有跳转路径 -->
+        <div id="mobile-menu" class="md:hidden hidden bg-xiaomi-dark border-t border-xiaomi-border">
+            <div class="mi-container py-4 flex flex-col gap-4">
+                <!-- 移动端搜索框 -->
+                <div class="relative">
+                    <input type="text" class="mi-search-input pr-8" placeholder="搜索技术动态...">
+                    <i class="fa fa-search absolute right-3 top-1/2 -translate-y-1/2 text-xiaomi-grayDark"></i>
+                </div>
+                <a href="index.html" class="py-2 hover:text-xiaomi-orange transition-colors">首页</a>
+                <a href="tech.html" class="py-2 hover:text-xiaomi-orange transition-colors">技术布局</a>
+                <a href="papers.html" class="py-2 text-xiaomi-orange transition-colors">博客&论文</a>
+                <a href="opensource.html" class="py-2 hover:text-xiaomi-orange transition-colors">开源生态</a>
+                <a href="tech-event.html" class="py-2 hover:text-xiaomi-orange transition-colors">技术活动</a>
+                <a href="https://utc.xiaomi.com/home" target="_blank" class="py-2 hover:text-xiaomi-orange transition-colors external-link">高校合作</a>
+                <a href="industry.html" class="py-2 hover:text-xiaomi-orange transition-colors">行业引领</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 博客&论文页面Banner -->
+    <section class="blog-paper-banner">
+        <div class="mi-container relative z-10">
+            <h1 class="text-[clamp(2rem,5vw,3.5rem)] font-bold mb-6">博客&论文</h1>
+            <p class="text-lg max-w-4xl text-xiaomi-grayDark">
+                分享小米在AI、具身智能、OS、芯片等领域的技术思考、研究成果与实践经验，<br>与全球开发者和研究者共同推动技术创新
+            </p>
+        </div>
+    </section>
+
+    <!-- 核心内容区 -->
+    <section class="content-section">
+        <div class="mi-container">
+            <!-- 内容切换标签（博客/论文） -->
+            <div class="content-tabs">
+                <div class="content-tab active" data-tab="blog">技术博客</div>
+                <div class="content-tab" data-tab="paper">研究论文</div>
+            </div>
+
+            <!-- 技术博客内容 -->
+            <div id="blog-content" class="content-panel">
+                <div class="blog-list">
+                    <!-- 博客卡片1 -->
+                    <div class="blog-card">
+                        <span class="blog-card-tag">AI</span>
+                        <h3 class="blog-card-title">小米MiMo-7B大模型端侧部署优化实践</h3>
+                        <p class="blog-card-desc">本文详细介绍了小米MiMo-7B大模型在端侧设备上的部署优化策略，包括模型量化、算子优化、内存管理等关键技术点，最终实现性能与功耗的平衡。</p>
+                        <div class="blog-card-meta">
+                            <span>2025-03-15</span>
+                            <span>小米AI实验室</span>
+                        </div>
+                    </div>
+                    <!-- 博客卡片2 -->
+                    <div class="blog-card">
+                        <span class="blog-card-tag">具身智能</span>
+                        <h3 class="blog-card-title">CyberOne人形机器人运动控制算法解析</h3>
+                        <p class="blog-card-desc">深入解析铁大人形机器人的运动控制核心算法，包括步态规划、平衡控制、环境感知融合等技术，以及在实际场景中的落地应用经验。</p>
+                        <div class="blog-card-meta">
+                            <span>2025-02-28</span>
+                            <span>小米机器人实验室</span>
+                        </div>
+                    </div>
+                    <!-- 博客卡片3 -->
+                    <div class="blog-card">
+                        <span class="blog-card-tag">OS</span>
+                        <h3 class="blog-card-title">澎湃OS 3跨设备协同技术架构设计</h3>
+                        <p class="blog-card-desc">分享澎湃OS 3在人车家全生态跨设备协同方面的技术架构设计，包括分布式能力、设备发现、数据同步、低功耗通信等核心技术实现。</p>
+                        <div class="blog-card-meta">
+                            <span>2025-02-10</span>
+                            <span>小米操作系统部</span>
+                        </div>
+                    </div>
+                    <!-- 博客卡片4 -->
+                    <div class="blog-card">
+                        <span class="blog-card-tag">芯片</span>
+                        <h3 class="blog-card-title">玄戒O1 AI芯片能效比优化设计思路</h3>
+                        <p class="blog-card-desc">探讨玄戒O1 AI芯片在架构设计、制程工艺、功耗管理等方面的优化思路，如何在有限的功耗预算下实现算力密度的最大化。</p>
+                        <div class="blog-card-meta">
+                            <span>2025-01-20</span>
+                            <span>小米芯片部</span>
+                        </div>
+                    </div>
+                    <!-- 博客卡片5 -->
+                    <div class="blog-card">
+                        <span class="blog-card-tag">计算机视觉</span>
+                        <h3 class="blog-card-title">小米手机AI计算摄影技术演进之路</h3>
+                        <p class="blog-card-desc">回顾小米手机影像技术的发展历程，从传统算法到AI大模型驱动的计算摄影，详解关键技术突破和实际效果提升。</p>
+                        <div class="blog-card-meta">
+                            <span>2025-01-05</span>
+                            <span>小米影像实验室</span>
+                        </div>
+                    </div>
+                    <!-- 博客卡片6 -->
+                    <div class="blog-card">
+                        <span class="blog-card-tag">电池技术</span>
+                        <h3 class="blog-card-title">AI驱动的电池新材料研发与验证</h3>
+                        <p class="blog-card-desc">介绍小米如何利用AI算法加速电池新材料的研发流程，通过机器学习预测材料性能，大幅缩短研发周期并提升电池性能。</p>
+                        <div class="blog-card-meta">
+                            <span>2024-12-18</span>
+                            <span>小米电池研发中心</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 博客分页 -->
+                <div class="pagination">
+                    <div class="pagination-item active">1</div>
+                    <div class="pagination-item">2</div>
+                    <div class="pagination-item">3</div>
+                    <div class="pagination-item">4</div>
+                    <div class="pagination-item">5</div>
+                    <div class="pagination-item">
+                        <i class="fa fa-angle-right"></i>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 研究论文内容（默认隐藏） -->
+            <div id="paper-content" class="content-panel hidden">
+                <div class="paper-list">
+                    <!-- 论文卡片1 -->
+                    <div class="paper-card">
+                        <h3 class="paper-card-title">MiMo-Embodied: 面向辅助驾驶的跨域具身基座模型</h3>
+                        <p class="paper-card-authors">张明, 李华, 王强, 小米智能驾驶实验室</p>
+                        <p class="paper-card-journal">NeurIPS 2024 | 国际神经信息处理系统大会</p>
+                        <p class="paper-card-abstract">本文提出了一种面向辅助驾驶场景的跨域具身基座模型MiMo-Embodied，通过融合多传感器数据和场景先验知识，显著提升了复杂路况下的环境感知精度和决策可靠性。</p>
+                        <div class="paper-card-links">
+                            <a href="#" class="paper-card-link"><i class="fa fa-file-pdf-o"></i> 论文PDF</a>
+                            <a href="#" class="paper-card-link"><i class="fa fa-github"></i> 代码开源</a>
+                            <a href="#" class="paper-card-link"><i class="fa fa-play-circle"></i> 视频讲解</a>
+                        </div>
+                    </div>
+                    <!-- 论文卡片2 -->
+                    <div class="paper-card">
+                        <h3 class="paper-card-title">TacRefineNet: 触觉驱动的机器人精细抓取微调模型</h3>
+                        <p class="paper-card-authors">刘伟, 赵阳, 陈杰, 小米机器人实验室</p>
+                        <p class="paper-card-journal">ICRA 2024 | 国际机器人与自动化大会</p>
+                        <p class="paper-card-abstract">提出了一种基于触觉反馈的机器人抓取微调模型TacRefineNet，能够根据物体的物理特性实时调整抓取策略，实现毫米级的精细操作能力。</p>
+                        <div class="paper-card-links">
+                            <a href="#" class="paper-card-link"><i class="fa fa-file-pdf-o"></i> 论文PDF</a>
+                            <a href="#" class="paper-card-link"><i class="fa fa-github"></i> 代码开源</a>
+                        </div>
+                    </div>
+                    <!-- 论文卡片3 -->
+                    <div class="paper-card">
+                        <h3 class="paper-card-title">玄戒O1: 面向端侧大模型推理的高能效AI芯片架构</h3>
+                        <p class="paper-card-authors">黄鑫, 周明, 吴伟, 小米芯片研究院</p>
+                        <p class="paper-card-journal">ISSCC 2024 | 国际固态电路大会</p>
+                        <p class="paper-card-abstract">介绍了小米玄戒O1 AI芯片的架构设计，采用异构计算架构和动态电压频率调节技术，在端侧大模型推理场景下实现3倍算力密度提升和50%能效比优化。</p>
+                        <div class="paper-card-links">
+                            <a href="#" class="paper-card-link"><i class="fa fa-file-pdf-o"></i> 论文PDF</a>
+                            <a href="#" class="paper-card-link"><i class="fa fa-link"></i> 技术解读</a>
+                        </div>
+                    </div>
+                    <!-- 论文卡片4 -->
+                    <div class="paper-card">
+                        <h3 class="paper-card-title">基于AI的高能量密度锂电池材料设计与验证</h3>
+                        <p class="paper-card-authors">郑涛, 孙丽, 林强, 小米电池研发中心</p>
+                        <p class="paper-card-journal">Advanced Materials 2024 | 先进材料期刊</p>
+                        <p class="paper-card-abstract">利用机器学习和分子动力学模拟相结合的方法，设计出一种新型高能量密度锂电池正极材料，能量密度提升20%，循环寿命提升30%。</p>
+                        <div class="paper-card-links">
+                            <a href="#" class="paper-card-link"><i class="fa fa-file-pdf-o"></i> 论文PDF</a>
+                            <a href="#" class="paper-card-link"><i class="fa fa-file-text-o"></i> 实验数据</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 论文分页 -->
+                <div class="pagination">
+                    <div class="pagination-item active">1</div>
+                    <div class="pagination-item">2</div>
+                    <div class="pagination-item">3</div>
+                    <div class="pagination-item">
+                        <i class="fa fa-angle-right"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 页脚（统一全站样式） -->
+    <footer class="bg-xiaomi-dark border-t border-xiaomi-border py-10">
+        <div class="mi-container">
+            <!-- 顶部LOGO -->
+            <div class="flex justify-center items-center gap-2 mb-8">
+                <div class="w-8 h-8 rounded-full bg-xiaomi-orange flex items-center justify-center">
+                    <i class="fa fa-microchip text-white text-sm"></i>
+                </div>
+                <span class="text-xl font-bold">小米技术</span>
+            </div>
+
+            <!-- Follow us 双微二维码 -->
+            <div class="max-w-md mx-auto mb-8">
+                <h3 class="text-center font-medium mb-6">Follow us 关注我们</h3>
+                <div class="grid grid-cols-2 gap-8">
+                    <!-- 微信二维码 -->
+                    <div class="text-center">
+                        <div class="w-32 h-32 bg-white rounded-lg mx-auto flex items-center justify-center mb-2">
+                            <span class="text-xiaomi-dark text-sm">微信二维码</span>
+                        </div>
+                        <p class="text-xiaomi-grayDark text-sm">小米技术公众号</p>
+                    </div>
+                    <!-- 微博二维码 -->
+                    <div class="text-center">
+                        <div class="w-32 h-32 bg-white rounded-lg mx-auto flex items-center justify-center mb-2">
+                            <span class="text-xiaomi-dark text-sm">微博二维码</span>
+                        </div>
+                        <p class="text-xiaomi-grayDark text-sm">小米技术官方微博</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 版权信息 -->
+            <div class="text-center">
+                <p class="text-xiaomi-grayDark text-xs">© 2025 小米集团 保留所有权利</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- JavaScript -->
+    <script>
+        // 导航栏滚动效果
+        const nav = document.getElementById('mi-nav');
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 50) {
+                nav.classList.add('nav-scrolled');
+            } else {
+                nav.classList.remove('nav-scrolled');
+            }
+        });
+
+        // 移动端菜单切换
+        const menuBtn = document.getElementById('menu-btn');
+        const mobileMenu = document.getElementById('mobile-menu');
+        const menuIcon = menuBtn.querySelector('i');
+        menuBtn.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+            if (menuIcon.classList.contains('fa-bars')) {
+                menuIcon.classList.replace('fa-bars', 'fa-times');
+            } else {
+                menuIcon.classList.replace('fa-times', 'fa-bars');
+            }
+        });
+
+        // 移动端菜单点击后关闭（排除外部链接）
+        const mobileLinks = mobileMenu.querySelectorAll('a');
+        mobileLinks.forEach(link => {
+            link.addEventListener('click', () => {
+                if (!link.classList.contains('external-link')) {
+                    mobileMenu.classList.add('hidden');
+                    menuIcon.classList.replace('fa-times', 'fa-bars');
+                }
+            });
+        });
+
+        // 内容标签切换（博客/论文）
+        const contentTabs = document.querySelectorAll('.content-tab');
+        const contentPanels = document.querySelectorAll('.content-panel');
+        
+        contentTabs.forEach(tab => {
+            tab.addEventListener('click', function() {
+                // 移除所有标签active状态
+                contentTabs.forEach(t => t.classList.remove('active'));
+                // 添加当前标签active状态
+                this.classList.add('active');
+                
+                // 隐藏所有内容面板
+                contentPanels.forEach(panel => panel.classList.add('hidden'));
+                
+                // 显示对应内容面板
+                const targetTab = this.getAttribute('data-tab');
+                document.getElementById(`${targetTab}-content`).classList.remove('hidden');
+            });
+        });
+
+        // 模拟链接跳转
+        document.querySelectorAll('a[href="#"]').forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                const linkText = this.textContent.trim();
+                const parentTitle = this.closest('.blog-card, .paper-card').querySelector('h3').textContent;
+                alert(`已打开「${parentTitle}」的${linkText}页面`);
+            });
+        });
+
+        // 分页交互
+        document.querySelectorAll('.pagination-item').forEach(item => {
+            item.addEventListener('click', function() {
+                if (!this.classList.contains('active') && !this.querySelector('i')) {
+                    // 移除所有分页active状态
+                    document.querySelectorAll('.pagination-item').forEach(i => i.classList.remove('active'));
+                    // 添加当前分页active状态
+                    this.classList.add('active');
+                    alert(`已切换到第${this.textContent}页`);
+                } else if (this.querySelector('i')) {
+                    alert('已切换到下一页');
+                }
+            });
+        });
+    </script>
+</body>
+</html>

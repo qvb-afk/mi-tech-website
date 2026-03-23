@@ -1,0 +1,572 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>小米技术 - 技术布局</title>
+    <!-- 外部资源 -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <!-- Tailwind自定义配置（小米品牌色+极简样式） -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        xiaomi: {
+                            orange: '#FF6900', // 小米橙主色
+                            orangeLight: '#FF8A00', // 浅橙
+                            dark: '#111111', // 深黑背景
+                            gray: '#F5F5F5', // 浅灰文字
+                            grayDark: '#999999', // 深灰辅助文字
+                            card: '#1A1A1A', // 卡片背景
+                            border: '#333333' // 边框色
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['PingFang SC', 'Microsoft YaHei', 'sans-serif'] // 小米官方中文字体
+                    },
+                    boxShadow: {
+                        'mi': '0 2px 8px rgba(0,0,0,0.15)', // 小米极简阴影
+                        'mi-hover': '0 8px 24px rgba(255,105,0,0.2)' // 卡片hover阴影
+                    }
+                }
+            }
+        }
+    </script>
+    <style type="text/tailwindcss">
+        @layer utilities {
+            /* 小米CSR风格通用工具类 */
+            .mi-container {
+                @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
+            }
+            .mi-section {
+                @apply py-16 md:py-24;
+            }
+            .mi-card {
+                @apply bg-xiaomi-card rounded-lg border border-xiaomi-border transition-all hover:shadow-mi hover:border-xiaomi-orange/30;
+            }
+            .mi-title-h2 {
+                @apply text-2xl md:text-3xl lg:text-4xl font-bold mb-4;
+            }
+            .mi-title-h5 {
+                @apply text-xiaomi-orange text-sm md:text-base font-medium mb-2;
+            }
+            .mi-desc {
+                @apply text-xiaomi-grayDark max-w-3xl mx-auto leading-relaxed;
+            }
+            .mi-btn-primary {
+                @apply bg-xiaomi-orange text-white px-6 py-2 rounded-lg hover:bg-xiaomi-orangeLight transition-colors;
+            }
+            .mi-btn-outline {
+                @apply border border-xiaomi-border text-white px-6 py-2 rounded-lg hover:border-xiaomi-orange hover:text-xiaomi-orange transition-colors;
+            }
+            .mi-search-input {
+                @apply bg-xiaomi-dark border border-xiaomi-border rounded-lg px-4 py-2 text-white outline-none focus:border-xiaomi-orange w-full md:w-64;
+            }
+            /* 技术落地板块专用样式 */
+            .tech-landing-section {
+                @apply py-12 bg-xiaomi-dark border-y border-xiaomi-border;
+            }
+            .tech-landing-title {
+                @apply text-3xl font-bold mb-12 text-white;
+            }
+            .tech-landing-grid {
+                @apply grid grid-cols-2 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-8 gap-8 md:gap-12 justify-items-center;
+            }
+            .tech-landing-item {
+                @apply flex flex-col items-center gap-4 transition-all hover:text-xiaomi-orange;
+            }
+            .tech-landing-icon {
+                @apply w-16 h-16 rounded-xl bg-xiaomi-card flex items-center justify-center text-2xl text-white hover:bg-xiaomi-orange/20 transition-colors;
+            }
+            .tech-landing-name {
+                @apply text-sm text-xiaomi-grayDark hover:text-xiaomi-orange transition-colors;
+            }
+            /* 技术布局页面专用样式 */
+            .tech-layout-banner {
+                @apply pt-32 pb-20 bg-xiaomi-dark relative;
+            }
+            .tech-layout-banner::after {
+                content: '';
+                @apply absolute top-0 left-0 w-full h-full bg-black/30;
+            }
+            .tech-layout-nav {
+                @apply sticky top-20 z-40 bg-black/90 backdrop-blur-md border-b border-xiaomi-border py-4;
+            }
+            .tech-layout-nav-list {
+                @apply flex flex-wrap justify-center gap-2 md:gap-8;
+            }
+            .tech-layout-nav-item {
+                @apply px-4 py-2 text-white hover:text-xiaomi-orange transition-colors relative;
+            }
+            .tech-layout-nav-item.active {
+                @apply text-xiaomi-orange;
+            }
+            .tech-layout-nav-item.active::after {
+                content: '';
+                @apply absolute bottom-0 left-0 w-full h-0.5 bg-xiaomi-orange;
+            }
+            .tech-layout-content {
+                @apply py-16 bg-black;
+            }
+            .tech-layout-category {
+                @apply mb-16;
+            }
+            .tech-layout-category-title {
+                @apply text-2xl md:text-3xl font-bold mb-8 text-white border-l-4 border-xiaomi-orange pl-4;
+            }
+            .tech-layout-subcategory {
+                @apply mb-12;
+            }
+            .tech-layout-subcategory-title {
+                @apply text-xl font-semibold mb-6 text-white;
+            }
+            .tech-layout-item-list {
+                @apply grid md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto;
+            }
+            .tech-layout-item-card {
+                @apply mi-card p-6 hover:translate-y-[-4px];
+            }
+            .tech-layout-item-title {
+                @apply text-lg font-bold mb-3 text-white;
+            }
+            .tech-layout-item-desc {
+                @apply text-xiaomi-grayDark text-sm leading-relaxed;
+            }
+            .tech-layout-link {
+                @apply text-xiaomi-orange text-sm hover:underline flex items-center mt-4;
+            }
+            /* 强制外部链接可点击 */
+            .external-link {
+                pointer-events: auto !important;
+                cursor: pointer !important;
+            }
+        }
+    </style>
+    <style>
+        /* 基础样式（严格匹配小米CSR官网风格） */
+        body {
+            scroll-behavior: smooth;
+            background-color: #000 !important;
+            color: #fff !important;
+            font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+        /* 极简滚动条（匹配小米官网） */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #111;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #FF6900;
+            border-radius: 3px;
+        }
+        /* 导航栏滚动渐变 */
+        .nav-scrolled {
+            background-color: rgba(0,0,0,0.95) !important;
+            backdrop-filter: blur(8px);
+            border-bottom: 1px solid #333;
+        }
+        /* 文章链接hover效果 */
+        .article-link {
+            color: #fff;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+        .article-link:hover {
+            color: #FF6900 !important;
+        }
+        /* 强制还原默认样式 */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        h1, h2, h3, h4, h5, h6 {
+            color: #fff;
+        }
+        p {
+            color: #999;
+        }
+    </style>
+</head>
+<body>
+    <!-- 导航栏（统一跳转链接+修复高校合作跳转） -->
+    <nav id="mi-nav" class="fixed w-full z-50 py-4 bg-black/80 backdrop-blur-md transition-all duration-300">
+        <div class="mi-container flex justify-between items-center">
+            <!-- 品牌LOGO -->
+            <a href="index.html" class="flex items-center gap-2">
+                <div class="w-8 h-8 rounded-full bg-xiaomi-orange flex items-center justify-center">
+                    <i class="fa fa-microchip text-white text-sm"></i>
+                </div>
+                <span class="text-xl font-bold">小米技术</span>
+            </a>
+
+            <!-- 桌面端导航（统一跳转链接） -->
+            <div class="hidden md:flex items-center gap-8">
+                <a href="index.html" class="text-sm hover:text-xiaomi-orange transition-colors">首页</a>
+                <a href="tech.html" class="text-sm text-xiaomi-orange transition-colors">技术布局</a>
+                <a href="papers.html" class="text-sm hover:text-xiaomi-orange transition-colors">博客&论文</a>
+                <a href="opensource.html" class="text-sm hover:text-xiaomi-orange transition-colors">开源生态</a>
+                <a href="tech-event.html" class="text-sm hover:text-xiaomi-orange transition-colors">技术活动</a>
+                <a href="https://utc.xiaomi.com/home" target="_blank" class="text-sm hover:text-xiaomi-orange transition-colors external-link">高校合作</a>
+                <a href="industry.html" class="text-sm hover:text-xiaomi-orange transition-colors">行业引领</a>
+                <!-- 搜索框 -->
+                <div class="relative">
+                    <input type="text" class="mi-search-input pr-8" placeholder="搜索技术动态...">
+                    <i class="fa fa-search absolute right-3 top-1/2 -translate-y-1/2 text-xiaomi-grayDark"></i>
+                </div>
+            </div>
+
+            <!-- 移动端菜单按钮 -->
+            <button id="menu-btn" class="md:hidden text-white text-xl">
+                <i class="fa fa-bars"></i>
+            </button>
+        </div>
+
+        <!-- 移动端导航菜单（统一跳转链接） -->
+        <div id="mobile-menu" class="md:hidden hidden bg-xiaomi-dark border-t border-xiaomi-border">
+            <div class="mi-container py-4 flex flex-col gap-4">
+                <!-- 移动端搜索框 -->
+                <div class="relative">
+                    <input type="text" class="mi-search-input pr-8" placeholder="搜索技术动态...">
+                    <i class="fa fa-search absolute right-3 top-1/2 -translate-y-1/2 text-xiaomi-grayDark"></i>
+                </div>
+                <a href="index.html" class="py-2 hover:text-xiaomi-orange transition-colors">首页</a>
+                <a href="tech.html" class="py-2 text-xiaomi-orange transition-colors">技术布局</a>
+                <a href="papers.html" class="py-2 hover:text-xiaomi-orange transition-colors">博客&论文</a>
+                <a href="opensource.html" class="py-2 hover:text-xiaomi-orange transition-colors">开源生态</a>
+                <a href="tech-event.html" class="py-2 hover:text-xiaomi-orange transition-colors">技术活动</a>
+                <a href="https://utc.xiaomi.com/home" target="_blank" class="py-2 hover:text-xiaomi-orange transition-colors external-link">高校合作</a>
+                <a href="industry.html" class="py-2 hover:text-xiaomi-orange transition-colors">行业引领</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 技术布局页面Banner -->
+    <section class="tech-layout-banner">
+        <div class="mi-container relative z-10">
+            <h1 class="text-[clamp(2rem,5vw,3.5rem)] font-bold mb-6">技术布局</h1>
+            <p class="mi-desc text-lg max-w-4xl">
+                小米以核心技术为根基，构建AI、具身智能、OS、芯片四大技术矩阵，<br>全方位赋能人车家全生态，持续推动科技创新与产业升级
+            </p>
+        </div>
+    </section>
+
+    <!-- 技术布局二级导航 -->
+    <section class="tech-layout-nav">
+        <div class="mi-container">
+            <div class="tech-layout-nav-list">
+                <a href="#ai" class="tech-layout-nav-item active" data-target="ai">AI</a>
+                <a href="#embodied-intelligence" class="tech-layout-nav-item" data-target="embodied-intelligence">具身智能</a>
+                <a href="#os" class="tech-layout-nav-item" data-target="os">OS</a>
+                <a href="#chip" class="tech-layout-nav-item" data-target="chip">芯片</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- 技术布局核心内容 -->
+    <section class="tech-layout-content">
+        <div class="mi-container">
+            <!-- AI板块 -->
+            <div id="ai" class="tech-layout-category">
+                <h2 class="tech-layout-category-title">AI</h2>
+                
+                <!-- Xiaomi Mimo系列模型 -->
+                <div class="tech-layout-subcategory">
+                    <h3 class="tech-layout-subcategory-title">Xiaomi Mimo系列模型</h3>
+                    <div class="tech-layout-item-list">
+                        <div class="tech-layout-item-card">
+                            <h4 class="tech-layout-item-title">Xiaomi MiMo-7B</h4>
+                            <p class="tech-layout-item-desc">轻量级70亿参数大模型，针对端侧设备深度优化，兼顾性能与功耗，可在手机、智能家居等设备上高效部署。</p>
+                            <a href="#" class="tech-layout-link">查看详情 <i class="fa fa-arrow-right ml-1"></i></a>
+                        </div>
+                        <div class="tech-layout-item-card">
+                            <h4 class="tech-layout-item-title">Xiaomi MiMo-VL</h4>
+                            <p class="tech-layout-item-desc">多模态视觉语言模型，具备强大的图像理解与跨模态交互能力，赋能小米影像、智能家居场景的视觉交互体验。</p>
+                            <a href="#" class="tech-layout-link">查看详情 <i class="fa fa-arrow-right ml-1"></i></a>
+                        </div>
+                        <div class="tech-layout-item-card">
+                            <h4 class="tech-layout-item-title">Xiaomi MiMo-Audio</h4>
+                            <p class="tech-layout-item-desc">音频专用大模型，优化语音识别、声纹识别、音频内容理解能力，提升小米汽车、音箱等产品的语音交互体验。</p>
+                            <a href="#" class="tech-layout-link">查看详情 <i class="fa fa-arrow-right ml-1"></i></a>
+                        </div>
+                        <div class="tech-layout-item-card">
+                            <h4 class="tech-layout-item-title">Xiaomi MiMo-V2-Flash</h4>
+                            <p class="tech-layout-item-desc">极速推理版本模型，推理速度提升80%，响应延迟降低至毫秒级，满足实时交互场景的极致性能要求。</p>
+                            <a href="#" class="tech-layout-link">查看详情 <i class="fa fa-arrow-right ml-1"></i></a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- AI赋能“人车家全生态” -->
+                <div class="tech-layout-subcategory">
+                    <h3 class="tech-layout-subcategory-title">AI赋能“人车家全生态”</h3>
+                    <div class="tech-layout-item-list">
+                        <div class="tech-layout-item-card">
+                            <h4 class="tech-layout-item-title">手机（影像）</h4>
+                            <p class="tech-layout-item-desc">AI计算摄影技术，通过大模型优化人像、夜景、动态抓拍等场景，实现超越硬件限制的影像效果。</p>
+                            <a href="#" class="tech-layout-link">查看详情 <i class="fa fa-arrow-right ml-1"></i></a>
+                        </div>
+                        <div class="tech-layout-item-card">
+                            <h4 class="tech-layout-item-title">汽车（语音）</h4>
+                            <p class="tech-layout-item-desc">全场景车载语音助手，支持多轮对话、上下文理解、离线语音，打造沉浸式智能座舱交互体验。</p>
+                            <a href="#" class="tech-layout-link">查看详情 <i class="fa fa-arrow-right ml-1"></i></a>
+                        </div>
+                        <div class="tech-layout-item-card">
+                            <h4 class="tech-layout-item-title">制造（质检）</h4>
+                            <p class="tech-layout-item-desc">AI视觉质检系统，替代人工检测产品外观缺陷，检测精度达99.9%，提升生产效率与品控水平。</p>
+                            <a href="#" class="tech-layout-link">查看详情 <i class="fa fa-arrow-right ml-1"></i></a>
+                        </div>
+                        <div class="tech-layout-item-card">
+                            <h4 class="tech-layout-item-title">智能家居（大家电）</h4>
+                            <p class="tech-layout-item-desc">AI场景化智能控制，基于用户行为习惯自动调整设备运行状态，实现节能、便捷的全屋智能体验。</p>
+                            <a href="#" class="tech-layout-link">查看详情 <i class="fa fa-arrow-right ml-1"></i></a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- AI for Science -->
+                <div class="tech-layout-subcategory">
+                    <h3 class="tech-layout-subcategory-title">AI for Science</h3>
+                    <div class="tech-layout-item-list">
+                        <div class="tech-layout-item-card">
+                            <h4 class="tech-layout-item-title">电池材料</h4>
+                            <p class="tech-layout-item-desc">利用AI算法加速电池新材料研发，通过分子模拟与机器学习，大幅缩短新材料筛选周期，提升电池能量密度与安全性。</p>
+                            <a href="#" class="tech-layout-link">查看详情 <i class="fa fa-arrow-right ml-1"></i></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 具身智能板块 -->
+            <div id="embodied-intelligence" class="tech-layout-category hidden">
+                <h2 class="tech-layout-category-title">具身智能</h2>
+                
+                <!-- 机器人 -->
+                <div class="tech-layout-subcategory">
+                    <h3 class="tech-layout-subcategory-title">机器人</h3>
+                    <div class="tech-layout-item-list">
+                        <div class="tech-layout-item-card">
+                            <h4 class="tech-layout-item-title">TacRefineNet</h4>
+                            <p class="tech-layout-item-desc">触觉驱动的机器人精细抓取微调模型，通过触觉感知优化抓取精度，可完成毫米级精细操作任务。</p>
+                            <a href="#" class="tech-layout-link">查看详情 <i class="fa fa-arrow-right ml-1"></i></a>
+                        </div>
+                        <div class="tech-layout-item-card">
+                            <h4 class="tech-layout-item-title">Xiaomi-Robotics-0</h4>
+                            <p class="tech-layout-item-desc">小米开源首代机器人VLA大模型，为机器人领域开发者提供基础模型支持，降低具身智能研发门槛。</p>
+                            <a href="#" class="tech-layout-link">查看详情 <i class="fa fa-arrow-right ml-1"></i></a>
+                        </div>
+                        <div class="tech-layout-item-card">
+                            <h4 class="tech-layout-item-title">CyberOne（铁大）</h4>
+                            <p class="tech-layout-item-desc">全尺寸人形机器人，具备多模态感知、运动控制、自主导航能力，可完成复杂的人机交互与场景适配任务。</p>
+                            <a href="#" class="tech-layout-link">查看详情 <i class="fa fa-arrow-right ml-1"></i></a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 端到端辅助驾驶 -->
+                <div class="tech-layout-subcategory">
+                    <h3 class="tech-layout-subcategory-title">端到端辅助驾驶</h3>
+                    <div class="tech-layout-item-list">
+                        <div class="tech-layout-item-card">
+                            <h4 class="tech-layout-item-title">MiMo-Embodied</h4>
+                            <p class="tech-layout-item-desc">跨域具身基座模型，融合视觉、激光雷达、毫米波雷达等多传感器数据，提升辅助驾驶的环境感知能力。</p>
+                            <a href="#" class="tech-layout-link">查看详情 <i class="fa fa-arrow-right ml-1"></i></a>
+                        </div>
+                        <div class="tech-layout-item-card">
+                            <h4 class="tech-layout-item-title">量产端到端辅助驾驶（Xiaomi HAD）</h4>
+                            <p class="tech-layout-item-desc">基于世界模型的阶段进展，实现从感知、决策到控制的端到端优化，大幅提升辅助驾驶的安全性与舒适性。</p>
+                            <a href="#" class="tech-layout-link">查看详情 <i class="fa fa-arrow-right ml-1"></i></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- OS板块 -->
+            <div id="os" class="tech-layout-category hidden">
+                <h2 class="tech-layout-category-title">OS</h2>
+                <div class="tech-layout-item-list">
+                    <div class="tech-layout-item-card">
+                        <h4 class="tech-layout-item-title">Xiaomi miclaw</h4>
+                        <p class="tech-layout-item-desc">小米自研实时操作系统内核，具备低延迟、高可靠、高安全特性，适用于汽车、工业控制等关键场景。</p>
+                        <a href="#" class="tech-layout-link">查看详情 <i class="fa fa-arrow-right ml-1"></i></a>
+                    </div>
+                    <div class="tech-layout-item-card">
+                        <h4 class="tech-layout-item-title">Xiaomi HyperOS 3</h4>
+                        <p class="tech-layout-item-desc">澎湃OS 3.0版本，进一步优化跨设备流转、AI智能交互、低功耗特性，打造更统一的人车家全生态体验。</p>
+                        <a href="https://hyperos.mi.com/" target="_blank" class="tech-layout-link">官网查看 <i class="fa fa-external-link ml-1"></i></a>
+                    </div>
+                    <div class="tech-layout-item-card">
+                        <h4 class="tech-layout-item-title">超级小爱</h4>
+                        <p class="tech-layout-item-desc">基于大模型重构的智能助手，支持复杂指令理解、多设备协同、个性化推荐，成为人车家全生态的交互中枢。</p>
+                        <a href="https://xiaoai.mi.com/" target="_blank" class="tech-layout-link">官网查看 <i class="fa fa-external-link ml-1"></i></a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 芯片板块 -->
+            <div id="chip" class="tech-layout-category hidden">
+                <h2 class="tech-layout-category-title">芯片</h2>
+                <div class="tech-layout-item-list">
+                    <div class="tech-layout-item-card">
+                        <h4 class="tech-layout-item-title">玄戒O1</h4>
+                        <p class="tech-layout-item-desc">小米自研AI芯片，专为端侧大模型推理优化，算力密度提升3倍，能效比达行业领先水平。</p>
+                        <a href="#" class="tech-layout-link">查看详情 <i class="fa fa-arrow-right ml-1"></i></a>
+                    </div>
+                    <div class="tech-layout-item-card">
+                        <h4 class="tech-layout-item-title">影像专用芯片（澎湃C系列）</h4>
+                        <p class="tech-layout-item-desc">第三代澎湃影像芯片，采用全新架构设计，计算摄影处理能力提升2倍，能效比提升50%。</p>
+                        <a href="#" class="tech-layout-link">查看详情 <i class="fa fa-arrow-right ml-1"></i></a>
+                    </div>
+                    <div class="tech-layout-item-card">
+                        <h4 class="tech-layout-item-title">快充与电源管理（澎湃P/G系列）</h4>
+                        <p class="tech-layout-item-desc">自研快充芯片与电源管理芯片，实现百瓦级快充的同时保障电池安全，延长电池使用寿命。</p>
+                        <a href="#" class="tech-layout-link">查看详情 <i class="fa fa-arrow-right ml-1"></i></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 页脚（仅保留双微二维码+小米技术标识） -->
+    <footer class="bg-xiaomi-dark border-t border-xiaomi-border py-10">
+        <div class="mi-container">
+            <!-- 顶部LOGO -->
+            <div class="flex justify-center items-center gap-2 mb-8">
+                <div class="w-8 h-8 rounded-full bg-xiaomi-orange flex items-center justify-center">
+                    <i class="fa fa-microchip text-white text-sm"></i>
+                </div>
+                <span class="text-xl font-bold">小米技术</span>
+            </div>
+
+            <!-- Follow us 双微二维码 -->
+            <div class="max-w-md mx-auto mb-8">
+                <h3 class="text-center font-medium mb-6">Follow us 关注我们</h3>
+                <div class="grid grid-cols-2 gap-8">
+                    <!-- 微信二维码 -->
+                    <div class="text-center">
+                        <div class="w-32 h-32 bg-white rounded-lg mx-auto flex items-center justify-center mb-2">
+                            <span class="text-xiaomi-dark text-sm">微信二维码</span>
+                        </div>
+                        <p class="text-xiaomi-grayDark text-sm">小米技术公众号</p>
+                    </div>
+                    <!-- 微博二维码 -->
+                    <div class="text-center">
+                        <div class="w-32 h-32 bg-white rounded-lg mx-auto flex items-center justify-center mb-2">
+                            <span class="text-xiaomi-dark text-sm">微博二维码</span>
+                        </div>
+                        <p class="text-xiaomi-grayDark text-sm">小米技术官方微博</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 版权信息 -->
+            <div class="text-center">
+                <p class="text-xiaomi-grayDark text-xs">© 2025 小米集团 保留所有权利</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- JavaScript（优化交互+修复跳转） -->
+    <script>
+        // 导航栏滚动效果
+        const nav = document.getElementById('mi-nav');
+        window.addEventListener('scroll', () => {
+            nav.classList.toggle('nav-scrolled', window.scrollY > 50);
+        });
+
+        // 移动端菜单切换
+        const menuBtn = document.getElementById('menu-btn');
+        const mobileMenu = document.getElementById('mobile-menu');
+        menuBtn.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+            const icon = menuBtn.querySelector('i');
+            icon.classList.toggle('fa-bars');
+            icon.classList.toggle('fa-times');
+        });
+
+        // 移动端菜单点击后关闭（排除外部链接）
+        const mobileLinks = mobileMenu.querySelectorAll('a');
+        mobileLinks.forEach(link => {
+            link.addEventListener('click', () => {
+                if (!link.classList.contains('external-link')) {
+                    mobileMenu.classList.add('hidden');
+                    const icon = menuBtn.querySelector('i');
+                    icon.classList.replace('fa-times', 'fa-bars');
+                }
+            });
+        });
+
+        // 仅对页面内锚点链接做平滑滚动
+        document.querySelectorAll('a[href^="#"]:not(.external-link)').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const targetId = this.getAttribute('href');
+                const targetElement = document.querySelector(targetId);
+                if (targetElement) {
+                    window.scrollTo({
+                        top: targetElement.offsetTop - 120,
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+
+        // 技术布局二级导航交互
+        const navItems = document.querySelectorAll('.tech-layout-nav-item');
+        const contentSections = document.querySelectorAll('.tech-layout-category');
+
+        navItems.forEach(item => {
+            item.addEventListener('click', function(e) {
+                e.preventDefault();
+                
+                // 移除所有active状态
+                navItems.forEach(nav => nav.classList.remove('active'));
+                // 添加当前active状态
+                this.classList.add('active');
+                
+                // 隐藏所有内容板块
+                contentSections.forEach(section => section.classList.add('hidden'));
+                
+                // 显示对应内容板块
+                const target = this.getAttribute('data-target');
+                document.getElementById(target).classList.remove('hidden');
+                
+                // 滚动到对应板块
+                document.getElementById(target).scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start'
+                });
+            });
+        });
+
+        // 处理页面加载时的锚点定位
+        window.addEventListener('load', function() {
+            const hash = window.location.hash;
+            if (hash) {
+                const targetNav = document.querySelector(`.tech-layout-nav-item[data-target="${hash.substring(1)}"]`);
+                if (targetNav) {
+                    targetNav.click();
+                }
+            }
+        });
+
+        // 模拟链接跳转
+        document.querySelectorAll('.tech-layout-link').forEach(link => {
+            link.addEventListener('click', function(e) {
+                if (!this.getAttribute('target')) {
+                    e.preventDefault();
+                    const title = this.previousElementSibling.previousElementSibling.textContent;
+                    alert(`已跳转到「${title}」的详细技术文档页面`);
+                }
+            });
+        });
+    </script>
+</body>
+</html>

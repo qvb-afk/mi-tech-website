@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>小米技术 - 首页</title>
+    <!-- 外部资源 -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <!-- Tailwind自定义配置 -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        xiaomi: {
+                            orange: '#FF6900',
+                            orangeLight: '#FF8A00',
+                            dark: '#111111',
+                            gray: '#F5F5F5',
+                            grayDark: '#999999',
+                            card: '#1A1A1A',
+                            border: '#333333'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['PingFang SC', 'Microsoft YaHei', 'sans-serif']
+                    },
+                    boxShadow: {
+                        'mi': '0 2px 8px rgba(0,0,0,0.15)',
+                        'mi-hover': '0 8px 24px rgba(255,105,0,0.2)'
+                    }
+                }
+            }
+        }
+    </script>
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .mi-container { @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8; }
+            .mi-section { @apply py-16 md:py-24; }
+            .mi-card { @apply bg-xiaomi-card rounded-lg border border-xiaomi-border transition-all hover:shadow-mi hover:border-xiaomi-orange/30; }
+            .mi-title-h2 { @apply text-2xl md:text-3xl lg:text-4xl font-bold mb-4; }
+            .mi-title-h5 { @apply text-xiaomi-orange text-sm md:text-base font-medium mb-2; }
+            .mi-desc { @apply text-xiaomi-grayDark max-w-3xl mx-auto leading-relaxed; }
+            .mi-btn-primary { @apply bg-xiaomi-orange text-white px-6 py-2 rounded-lg hover:bg-xiaomi-orangeLight transition-colors; }
+            .mi-btn-outline { @apply border border-xiaomi-border text-white px-6 py-2 rounded-lg hover:border-xiaomi-orange hover:text-xiaomi-orange transition-colors; }
+            .mi-search-input { @apply bg-xiaomi-dark border border-xiaomi-border rounded-lg px-4 py-2 text-white outline-none focus:border-xiaomi-orange w-full md:w-64; }
+            .tech-landing-section { @apply py-12 bg-xiaomi-dark border-y border-xiaomi-border; }
+            .tech-landing-title { @apply text-3xl font-bold mb-12 text-white; }
+            .tech-landing-grid { @apply grid grid-cols-2 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-8 gap-8 md:gap-12 justify-items-center; }
+            .tech-landing-item { @apply flex flex-col items-center gap-4 transition-all hover:text-xiaomi-orange; }
+            .tech-landing-icon { @apply w-16 h-16 rounded-xl bg-xiaomi-card flex items-center justify-center text-2xl text-white hover:bg-xiaomi-orange/20 transition-colors; }
+            .tech-landing-name { @apply text-sm text-xiaomi-grayDark hover:text-xiaomi-orange transition-colors; }
+            .external-link {
+                pointer-events: auto !important;
+                cursor: pointer !important;
+            }
+        }
+    </style>
+    <style>
+        body {
+            background-color: #000 !important;
+            color: #fff !important;
+            font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: #111; }
+        ::-webkit-scrollbar-thumb { background: #FF6900; border-radius: 3px; }
+        .nav-scrolled {
+            background-color: rgba(0,0,0,0.95) !important;
+            backdrop-filter: blur(8px);
+            border-bottom: 1px solid #333;
+        }
+        .article-link {
+            color: #fff;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+        .article-link:hover { color: #FF6900 !important; }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        h1, h2, h3, h4, h5, h6 { color: #fff; }
+        p { color: #999; }
+    </style>
+</head>
+<body>
+    <!-- 导航栏（统一跳转链接） -->
+    <nav id="mi-nav" class="fixed w-full z-50 py-4 bg-black/80 backdrop-blur-md transition-all duration-300">
+        <div class="mi-container flex justify-between items-center">
+            <!-- LOGO -->
+            <a href="index.html" class="flex items-center gap-2">
+                <div class="w-8 h-8 rounded-full bg-xiaomi-orange flex items-center justify-center">
+                    <i class="fa fa-microchip text-white text-sm"></i>
+                </div>
+                <span class="text-xl font-bold">小米技术</span>
+            </a>
+
+            <!-- 桌面端导航 -->
+            <div class="hidden md:flex items-center gap-8">
+                <a href="index.html" class="text-sm text-xiaomi-orange transition-colors">首页</a>
+                <a href="tech.html" class="text-sm hover:text-xiaomi-orange transition-colors">技术布局</a>
+                <a href="papers.html" class="text-sm hover:text-xiaomi-orange transition-colors">博客&论文</a>
+                <a href="opensource.html" class="text-sm hover:text-xiaomi-orange transition-colors">开源生态</a>
+                <a href="tech-event.html" class="text-sm hover:text-xiaomi-orange transition-colors">技术活动</a>
+                <a href="https://utc.xiaomi.com/home" target="_blank" class="text-sm hover:text-xiaomi-orange transition-colors external-link">高校合作</a>
+                <a href="industry.html" class="text-sm hover:text-xiaomi-orange transition-colors">行业引领</a>
+                <!-- 搜索框 -->
+                <div class="relative">
+                    <input type="text" class="mi-search-input pr-8" placeholder="搜索技术动态...">
+                    <i class="fa fa-search absolute right-3 top-1/2 -translate-y-1/2 text-xiaomi-grayDark"></i>
+                </div>
+            </div>
+
+            <!-- 移动端菜单按钮 -->
+            <button id="menu-btn" class="md:hidden text-white text-xl">
+                <i class="fa fa-bars"></i>
+            </button>
+        </div>
+
+        <!-- 移动端导航菜单 -->
+        <div id="mobile-menu" class="md:hidden hidden bg-xiaomi-dark border-t border-xiaomi-border">
+            <div class="mi-container py-4 flex flex-col gap-4">
+                <div class="relative">
+                    <input type="text" class="mi-search-input pr-8" placeholder="搜索技术动态...">
+                    <i class="fa fa-search absolute right-3 top-1/2 -translate-y-1/2 text-xiaomi-grayDark"></i>
+                </div>
+                <a href="index.html" class="py-2 text-xiaomi-orange transition-colors">首页</a>
+                <a href="tech.html" class="py-2 hover:text-xiaomi-orange transition-colors">技术布局</a>
+                <a href="papers.html" class="py-2 hover:text-xiaomi-orange transition-colors">博客&论文</a>
+                <a href="opensource.html" class="py-2 hover:text-xiaomi-orange transition-colors">开源生态</a>
+                <a href="tech-event.html" class="py-2 hover:text-xiaomi-orange transition-colors">技术活动</a>
+                <a href="https://utc.xiaomi.com/home" target="_blank" class="py-2 hover:text-xiaomi-orange transition-colors external-link">高校合作</a>
+                <a href="industry.html" class="py-2 hover:text-xiaomi-orange transition-colors">行业引领</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 首页Banner -->
+    <section id="hero" class="min-h-screen flex items-center pt-20 relative">
+        <div class="absolute inset-0 z-0">
+            <img src="https://picsum.photos/id/180/1920/1080" alt="小米技术-人车家全生态" class="w-full h-full object-cover opacity-20">
+            <div class="absolute inset-0 bg-gradient-to-b from-black/70 via-black/80 to-black"></div>
+        </div>
+        <div class="mi-container relative z-10 text-center">
+            <h1 class="text-[clamp(2rem,5vw,3.5rem)] font-bold mb-6 leading-tight">
+                技术驱动 <span class="text-xiaomi-orange">人车家全生态</span>
+            </h1>
+            <p class="mi-desc text-lg">
+                以核心技术为根基，打造AI、具身智能、OS、芯片四大技术矩阵，<br>让每个人享受创新科技带来的美好生活
+            </p>
+        </div>
+    </section>
+
+    <!-- 最新动态模块 -->
+    <section id="news" class="mi-section bg-xiaomi-dark">
+        <div class="mi-container mb-12">
+            <h5 class="mi-title-h5">最新动态</h5>
+            <h2 class="mi-title-h2">小米技术前沿进展</h2>
+            <p class="mi-desc mb-10">实时更新小米核心技术研发、产品发布、集团战略等重要动态</p>
+            
+            <div class="space-y-8 max-w-4xl mx-auto">
+                <div class="mi-card p-6 hover:translate-y-[-2px] transition-transform">
+                    <div class="flex justify-between items-start mb-3">
+                        <span class="text-xiaomi-grayDark text-sm">2025-04-15</span>
+                        <span class="bg-xiaomi-orange/20 text-xiaomi-orange px-3 py-1 rounded-full text-xs">技术发布</span>
+                    </div>
+                    <a href="news-list.html#article1" class="article-link block">
+                        <h3 class="text-xl font-bold mb-2">小米发布新一代澎湃OS 2.0：人车家全场景体验再升级</h3>
+                    </a>
+                    <p class="text-xiaomi-grayDark">本次发布的澎湃OS 2.0在跨设备流转、AI智能交互、低功耗优化等方面实现重大突破，支持超2000款智能设备无缝连接...</p>
+                </div>
+                <div class="mi-card p-6 hover:translate-y-[-2px] transition-transform">
+                    <div class="flex justify-between items-start mb-3">
+                        <span class="text-xiaomi-grayDark text-sm">2025-04-08</span>
+                        <span class="bg-xiaomi-orange/20 text-xiaomi-orange px-3 py-1 rounded-full text-xs">研究进展</span>
+                    </div>
+                    <a href="news-list.html#article2" class="article-link block">
+                        <h3 class="text-xl font-bold mb-2">Xiaomi Mimo 7B大模型开源：端侧部署效率提升40%</h3>
+                    </a>
+                    <p class="text-xiaomi-grayDark">小米AI实验室正式开源轻量级Mimo 7B大模型，针对手机、智能家居等端侧设备做了深度优化，推理速度提升40%...</p>
+                </div>
+            </div>
+
+            <div class="text-center mt-12">
+                <a href="news-list.html" class="mi-btn-primary inline-block">查看更多动态</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- 媒体报道模块 -->
+    <section id="media" class="mi-section bg-black">
+        <div class="mi-container mb-12">
+            <h5 class="mi-title-h5">媒体报道</h5>
+            <h2 class="mi-title-h2">央视网《科技解码局》系列报道</h2>
+            <p class="mi-desc mb-10">权威媒体解读小米核心技术创新与行业价值</p>
+            
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-5xl mx-auto">
+                <div class="mi-card overflow-hidden hover:scale-[1.02] transition-transform">
+                    <div class="h-48 overflow-hidden">
+                        <img src="https://picsum.photos/id/96/800/500" alt="澎湃OS：重构人车家全生态" class="w-full h-full object-cover hover:scale-105 transition-transform duration-500">
+                    </div>
+                    <div class="p-6">
+                        <span class="text-xiaomi-grayDark text-sm block mb-2">2025-04-10 | 央视网《科技解码局》</span>
+                        <a href="media-list.html#media1" class="article-link block">
+                            <h3 class="text-lg font-bold mb-3">澎湃OS：重构人车家全生态的操作系统</h3>
+                        </a>
+                        <p class="text-xiaomi-grayDark text-sm mb-4">深度解析小米澎湃OS的技术架构与生态布局，揭秘如何实现人、车、家设备的无缝融合...</p>
+                        <a href="media-list.html#media1" class="text-xiaomi-orange text-sm hover:underline inline-flex items-center">
+                            查看详情 <i class="fa fa-arrow-right ml-1"></i>
+                        </a>
+                    </div>
+                </div>
+                <div class="mi-card overflow-hidden hover:scale-[1.02] transition-transform">
+                    <div class="h-48 overflow-hidden">
+                        <img src="https://picsum.photos/id/4/800/500" alt="小米AI大模型：从实验室到千家万户" class="w-full h-full object-cover hover:scale-105 transition-transform duration-500">
+                    </div>
+                    <div class="p-6">
+                        <span class="text-xiaomi-grayDark text-sm block mb-2">2025-03-28 | 央视网《科技解码局》</span>
+                        <a href="media-list.html#media2" class="article-link block">
+                            <h3 class="text-lg font-bold mb-3">小米AI大模型：从实验室到千家万户</h3>
+                        </a>
+                        <p class="text-xiaomi-grayDark text-sm mb-4">探访小米AI实验室，揭秘Mimo大模型如何实现轻量化部署，让AI能力走进普通消费者生活...</p>
+                        <a href="media-list.html#media2" class="text-xiaomi-orange text-sm hover:underline inline-flex items-center">
+                            查看详情 <i class="fa fa-arrow-right ml-1"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="text-center mt-12">
+                <a href="media-list.html" class="mi-btn-outline inline-block">查看更多报道</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- 技术落地板块 -->
+    <section class="tech-landing-section">
+        <div class="mi-container">
+            <h2 class="tech-landing-title">技术落地</h2>
+            <div class="tech-landing-grid">
+                <div class="tech-landing-item">
+                    <div class="tech-landing-icon"><i class="fa fa-mobile"></i></div>
+                    <span class="tech-landing-name">小米手机</span>
+                </div>
+                <div class="tech-landing-item">
+                    <div class="tech-landing-icon"><i class="fa fa-car"></i></div>
+                    <span class="tech-landing-name">小米汽车</span>
+                </div>
+                <div class="tech-landing-item">
+                    <div class="tech-landing-icon"><i class="fa fa-volume-up"></i></div>
+                    <span class="tech-landing-name">小米音箱</span>
+                </div>
+                <div class="tech-landing-item">
+                    <div class="tech-landing-icon"><i class="fa fa-robot"></i></div>
+                    <span class="tech-landing-name">小米机器人</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 页脚 -->
+    <footer class="bg-xiaomi-dark border-t border-xiaomi-border py-10">
+        <div class="mi-container">
+            <div class="flex justify-center items-center gap-2 mb-8">
+                <div class="w-8 h-8 rounded-full bg-xiaomi-orange flex items-center justify-center">
+                    <i class="fa fa-microchip text-white text-sm"></i>
+                </div>
+                <span class="text-xl font-bold">小米技术</span>
+            </div>
+            <div class="max-w-md mx-auto mb-8">
+                <h3 class="text-center font-medium mb-6">Follow us 关注我们</h3>
+                <div class="grid grid-cols-2 gap-8">
+                    <div class="text-center">
+                        <div class="w-32 h-32 bg-white rounded-lg mx-auto flex items-center justify-center mb-2">
+                            <span class="text-xiaomi-dark text-sm">微信二维码</span>
+                        </div>
+                        <p class="text-xiaomi-grayDark text-sm">小米技术公众号</p>
+                    </div>
+                    <div class="text-center">
+                        <div class="w-32 h-32 bg-white rounded-lg mx-auto flex items-center justify-center mb-2">
+                            <span class="text-xiaomi-dark text-sm">微博二维码</span>
+                        </div>
+                        <p class="text-xiaomi-grayDark text-sm">小米技术官方微博</p>
+                    </div>
+                </div>
+            </div>
+            <div class="text-center">
+                <p class="text-xiaomi-grayDark text-xs">© 2025 小米集团 保留所有权利</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- 极简JS：只保留菜单切换和导航栏滚动 -->
+    <script>
+        // 导航栏滚动效果
+        const nav = document.getElementById('mi-nav');
+        window.addEventListener('scroll', () => {
+            nav.classList.toggle('nav-scrolled', window.scrollY > 50);
+        });
+
+        // 移动端菜单切换
+        const menuBtn = document.getElementById('menu-btn');
+        const mobileMenu = document.getElementById('mobile-menu');
+        menuBtn.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+            const icon = menuBtn.querySelector('i');
+            icon.classList.toggle('fa-bars');
+            icon.classList.toggle('fa-times');
+        });
+
+        // 移动端菜单点击后关闭（排除外部链接）
+        const mobileLinks = mobileMenu.querySelectorAll('a');
+        mobileLinks.forEach(link => {
+            link.addEventListener('click', () => {
+                if (!link.classList.contains('external-link')) {
+                    mobileMenu.classList.add('hidden');
+                    const icon = menuBtn.querySelector('i');
+                    icon.classList.replace('fa-times', 'fa-bars');
+                }
+            });
+        });
+    </script>
+</body>
+</html>

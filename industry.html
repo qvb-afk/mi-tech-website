@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>小米技术 - 行业引领</title>
+    <!-- 外部资源 -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <!-- Tailwind自定义配置（复用小米品牌色） -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        xiaomi: {
+                            orange: '#FF6900', // 小米橙主色
+                            orangeLight: '#FF8A00', // 浅橙
+                            dark: '#111111', // 深黑背景
+                            gray: '#F5F5F5', // 浅灰文字
+                            grayDark: '#999999', // 深灰辅助文字
+                            card: '#1A1A1A', // 卡片背景
+                            border: '#333333' // 边框色
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['PingFang SC', 'Microsoft YaHei', 'sans-serif'] // 小米官方中文字体
+                    },
+                    boxShadow: {
+                        'mi': '0 2px 8px rgba(0,0,0,0.15)', // 小米极简阴影
+                        'mi-hover': '0 8px 24px rgba(255,105,0,0.2)' // 卡片hover阴影
+                    }
+                }
+            }
+        }
+    </script>
+    <style type="text/tailwindcss">
+        @layer utilities {
+            /* 通用工具类（复用） */
+            .mi-container {
+                @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
+            }
+            .mi-card {
+                @apply bg-xiaomi-card rounded-lg border border-xiaomi-border transition-all hover:shadow-mi-hover hover:border-xiaomi-orange/30;
+            }
+            .mi-search-input {
+                @apply bg-xiaomi-dark border border-xiaomi-border rounded-lg px-4 py-2 text-white outline-none focus:border-xiaomi-orange w-full md:w-64;
+            }
+            /* 行业引领页面专用样式 */
+            .industry-banner {
+                @apply pt-32 pb-20 bg-xiaomi-dark relative;
+            }
+            .industry-content {
+                @apply py-16 bg-black;
+            }
+            .industry-title {
+                @apply text-2xl md:text-3xl font-bold mb-16 text-white text-center;
+            }
+            /* 行业引领卡片样式（匹配架构图层级） */
+            .industry-card {
+                @apply mi-card rounded-xl overflow-hidden p-8 h-full;
+            }
+            .industry-card-header {
+                @apply flex items-center gap-4 mb-6;
+            }
+            .industry-card-icon {
+                @apply w-12 h-12 rounded-full bg-xiaomi-orange/20 flex items-center justify-center text-xiaomi-orange text-xl;
+            }
+            .industry-card-title {
+                @apply text-xl font-bold text-white;
+            }
+            .industry-card-desc {
+                @apply text-xiaomi-grayDark leading-relaxed mb-4;
+            }
+            .industry-card-item {
+                @apply flex items-start gap-3 mb-3 text-gray-300;
+            }
+            .industry-card-item i {
+                @apply text-xiaomi-orange mt-1;
+            }
+            /* 外部链接标识 */
+            .external-link {
+                pointer-events: auto !important;
+                cursor: pointer !important;
+            }
+        }
+    </style>
+    <style>
+        /* 基础样式（复用） */
+        body {
+            scroll-behavior: smooth;
+            background-color: #000 !important;
+            color: #fff !important;
+            font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+        /* 极简滚动条 */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #111;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #FF6900;
+            border-radius: 3px;
+        }
+        /* 导航栏滚动渐变 */
+        .nav-scrolled {
+            background-color: rgba(0,0,0,0.95) !important;
+            backdrop-filter: blur(8px);
+            border-bottom: 1px solid #333;
+        }
+        /* 强制还原默认样式 */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        h1, h2, h3, h4, h5, h6 {
+            color: #fff;
+        }
+        p {
+            color: #999;
+        }
+    </style>
+</head>
+<body>
+    <!-- 导航栏（行业引领为当前激活状态，修复所有跳转路径） -->
+    <nav id="mi-nav" class="fixed w-full z-50 py-4 bg-black/80 backdrop-blur-md transition-all duration-300">
+        <div class="mi-container flex justify-between items-center">
+            <!-- 品牌LOGO -->
+            <a href="index.html" class="flex items-center gap-2">
+                <div class="w-8 h-8 rounded-full bg-xiaomi-orange flex items-center justify-center">
+                    <i class="fa fa-microchip text-white text-sm"></i>
+                </div>
+                <span class="text-xl font-bold">小米技术</span>
+            </a>
+
+            <!-- 桌面端导航 - 行业引领为当前激活状态（统一跳转路径） -->
+            <div class="hidden md:flex items-center gap-8">
+                <a href="index.html" class="text-sm hover:text-xiaomi-orange transition-colors">首页</a>
+                <a href="tech.html" class="text-sm hover:text-xiaomi-orange transition-colors">技术布局</a>
+                <a href="papers.html" class="text-sm hover:text-xiaomi-orange transition-colors">博客&论文</a>
+                <a href="opensource.html" class="text-sm hover:text-xiaomi-orange transition-colors">开源生态</a>
+                <a href="tech-event.html" class="text-sm hover:text-xiaomi-orange transition-colors">技术活动</a>
+                <a href="https://utc.xiaomi.com/home" target="_blank" class="text-sm hover:text-xiaomi-orange transition-colors external-link">高校合作</a>
+                <a href="industry.html" class="text-sm text-xiaomi-orange transition-colors">行业引领</a>
+                <!-- 搜索框 -->
+                <div class="relative">
+                    <input type="text" class="mi-search-input pr-8" placeholder="搜索技术动态...">
+                    <i class="fa fa-search absolute right-3 top-1/2 -translate-y-1/2 text-xiaomi-grayDark"></i>
+                </div>
+            </div>
+
+            <!-- 移动端菜单按钮 -->
+            <button id="menu-btn" class="md:hidden text-white text-xl">
+                <i class="fa fa-bars"></i>
+            </button>
+        </div>
+
+        <!-- 移动端导航菜单 - 行业引领为当前激活状态（修复跳转路径） -->
+        <div id="mobile-menu" class="md:hidden hidden bg-xiaomi-dark border-t border-xiaomi-border">
+            <div class="mi-container py-4 flex flex-col gap-4">
+                <!-- 移动端搜索框 -->
+                <div class="relative">
+                    <input type="text" class="mi-search-input pr-8" placeholder="搜索技术动态...">
+                    <i class="fa fa-search absolute right-3 top-1/2 -translate-y-1/2 text-xiaomi-grayDark"></i>
+                </div>
+                <a href="index.html" class="py-2 hover:text-xiaomi-orange transition-colors">首页</a>
+                <a href="tech.html" class="py-2 hover:text-xiaomi-orange transition-colors">技术布局</a>
+                <a href="papers.html" class="py-2 hover:text-xiaomi-orange transition-colors">博客&论文</a>
+                <a href="opensource.html" class="py-2 hover:text-xiaomi-orange transition-colors">开源生态</a>
+                <a href="tech-event.html" class="py-2 hover:text-xiaomi-orange transition-colors">技术活动</a>
+                <a href="https://utc.xiaomi.com/home" target="_blank" class="py-2 hover:text-xiaomi-orange transition-colors external-link">高校合作</a>
+                <a href="industry.html" class="py-2 text-xiaomi-orange transition-colors">行业引领</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 行业引领页面Banner -->
+    <section class="industry-banner">
+        <div class="mi-container relative z-10">
+            <h1 class="text-[clamp(2rem,5vw,3.5rem)] font-bold mb-6">行业引领</h1>
+            <p class="text-lg max-w-4xl text-xiaomi-grayDark">
+                小米积极参与行业标准制定，持续强化专利布局，<br>凭借技术创新斩获多项行业大奖，引领人工智能领域发展
+            </p>
+        </div>
+    </section>
+
+    <!-- 行业引领核心内容区（参考架构图分三大板块） -->
+    <section class="industry-content">
+        <div class="mi-container">
+            <h2 class="industry-title">小米行业引领成果矩阵</h2>
+            
+            <!-- 内容卡片网格（适配移动端） -->
+            <div class="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+                <!-- 卡片1：技术标准 -->
+                <div class="industry-card">
+                    <div class="industry-card-header">
+                        <div class="industry-card-icon">
+                            <i class="fa fa-book"></i>
+                        </div>
+                        <h3 class="industry-card-title">技术标准</h3>
+                    </div>
+                    <div class="industry-card-desc">
+                        小米深度参与人工智能领域技术标准建设，主导或参与制定多项行业关键标准，推动行业规范化发展。
+                    </div>
+                    <div class="industry-card-item">
+                        <i class="fa fa-check-circle"></i>
+                        <span>参与制定大模型评测体系，建立行业统一的评测标准</span>
+                    </div>
+                    <div class="industry-card-item">
+                        <i class="fa fa-check-circle"></i>
+                        <span>主导智能终端AI能力评估标准制定</span>
+                    </div>
+                    <div class="industry-card-item">
+                        <i class="fa fa-check-circle"></i>
+                        <span>参与多模态交互、具身智能等前沿领域技术标准建设</span>
+                    </div>
+                    <div class="industry-card-item">
+                        <i class="fa fa-check-circle"></i>
+                        <span>推动人车家全生态AI接口标准化落地</span>
+                    </div>
+                </div>
+
+                <!-- 卡片2：专利情况 -->
+                <div class="industry-card">
+                    <div class="industry-card-header">
+                        <div class="industry-card-icon">
+                            <i class="fa fa-shield"></i>
+                        </div>
+                        <h3 class="industry-card-title">专利情况</h3>
+                    </div>
+                    <div class="industry-card-desc">
+                        小米持续加大AI领域专利布局，覆盖大模型、计算机视觉、自然语言处理等核心技术方向。
+                    </div>
+                    <div class="industry-card-item">
+                        <i class="fa fa-check-circle"></i>
+                        <span>全球AI相关专利申请量超10000件</span>
+                    </div>
+                    <div class="industry-card-item">
+                        <i class="fa fa-check-circle"></i>
+                        <span>大模型相关专利覆盖训练、推理、应用全链路</span>
+                    </div>
+                    <div class="industry-card-item">
+                        <i class="fa fa-check-circle"></i>
+                        <span>海外专利布局覆盖30+国家和地区</span>
+                    </div>
+                    <div class="industry-card-item">
+                        <i class="fa fa-check-circle"></i>
+                        <span>专利转化率行业领先，超60%专利已落地产品</span>
+                    </div>
+                </div>
+
+                <!-- 卡片3：行业奖项 -->
+                <div class="industry-card">
+                    <div class="industry-card-header">
+                        <div class="industry-card-icon">
+                            <i class="fa fa-trophy"></i>
+                        </div>
+                        <h3 class="industry-card-title">行业奖项</h3>
+                    </div>
+                    <div class="industry-card-desc">
+                        小米凭借领先的技术创新能力和落地成果，斩获多项国内外权威行业奖项。
+                    </div>
+                    <div class="industry-card-item">
+                        <i class="fa fa-check-circle"></i>
+                        <span>量子位「2025人工智能年度杰出解决方案」</span>
+                    </div>
+                    <div class="industry-card-item">
+                        <i class="fa fa-check-circle"></i>
+                        <span>陈龙获选2025年度亚太区“35岁以下科技创新35人”</span>
+                    </div>
+                    <div class="industry-card-item">
+                        <i class="fa fa-check-circle"></i>
+                        <span>小米大模型获「全球AI创新应用金奖」</span>
+                    </div>
+                    <div class="industry-card-item">
+                        <i class="fa fa-check-circle"></i>
+                        <span>入选《麻省理工科技评论》年度50家聪明公司</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 页脚（完全复用统一样式） -->
+    <footer class="bg-xiaomi-dark border-t border-xiaomi-border py-10">
+        <div class="mi-container">
+            <!-- 顶部LOGO -->
+            <div class="flex justify-center items-center gap-2 mb-8">
+                <div class="w-8 h-8 rounded-full bg-xiaomi-orange flex items-center justify-center">
+                    <i class="fa fa-microchip text-white text-sm"></i>
+                </div>
+                <span class="text-xl font-bold">小米技术</span>
+            </div>
+
+            <!-- Follow us 双微二维码 -->
+            <div class="max-w-md mx-auto mb-8">
+                <h3 class="text-center font-medium mb-6">Follow us 关注我们</h3>
+                <div class="grid grid-cols-2 gap-8">
+                    <!-- 微信二维码 -->
+                    <div class="text-center">
+                        <div class="w-32 h-32 bg-white rounded-lg mx-auto flex items-center justify-center mb-2">
+                            <span class="text-xiaomi-dark text-sm">微信二维码</span>
+                        </div>
+                        <p class="text-xiaomi-grayDark text-sm">小米技术公众号</p>
+                    </div>
+                    <!-- 微博二维码 -->
+                    <div class="text-center">
+                        <div class="w-32 h-32 bg-white rounded-lg mx-auto flex items-center justify-center mb-2">
+                            <span class="text-xiaomi-dark text-sm">微博二维码</span>
+                        </div>
+                        <p class="text-xiaomi-grayDark text-sm">小米技术官方微博</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 版权信息 -->
+            <div class="text-center">
+                <p class="text-xiaomi-grayDark text-xs">© 2025 小米集团 保留所有权利</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- JavaScript（优化交互逻辑，修复锚点问题） -->
+    <script>
+        // 导航栏滚动效果
+        const nav = document.getElementById('mi-nav');
+        window.addEventListener('scroll', () => {
+            nav.classList.toggle('nav-scrolled', window.scrollY > 50);
+        });
+
+        // 移动端菜单切换
+        const menuBtn = document.getElementById('menu-btn');
+        const mobileMenu = document.getElementById('mobile-menu');
+        const menuIcon = menuBtn.querySelector('i');
+        
+        menuBtn.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+            menuIcon.classList.toggle('fa-bars');
+            menuIcon.classList.toggle('fa-times');
+        });
+
+        // 移动端菜单点击后关闭（排除外部链接）
+        const mobileLinks = mobileMenu.querySelectorAll('a');
+        mobileLinks.forEach(link => {
+            link.addEventListener('click', () => {
+                if (!link.classList.contains('external-link')) {
+                    mobileMenu.classList.add('hidden');
+                    menuIcon.classList.replace('fa-times', 'fa-bars');
+                }
+            });
+        });
+
+        // 移除无效的锚点滚动代码（原锚点不存在，避免控制台报错）
+    </script>
+</body>
+</html>

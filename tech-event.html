@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>小米技术 - 技术活动</title>
+    <!-- 外部资源 -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <!-- Tailwind自定义配置（统一小米品牌色） -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        xiaomi: {
+                            orange: '#FF6900', // 小米橙主色
+                            orangeLight: '#FF8A00', // 浅橙
+                            dark: '#111111', // 深黑背景
+                            gray: '#F5F5F5', // 浅灰文字
+                            grayDark: '#999999', // 深灰辅助文字
+                            card: '#1A1A1A', // 卡片背景
+                            border: '#333333' // 边框色
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['PingFang SC', 'Microsoft YaHei', 'sans-serif'] // 小米官方中文字体
+                    },
+                    boxShadow: {
+                        'mi': '0 2px 8px rgba(0,0,0,0.15)', // 小米极简阴影
+                        'mi-hover': '0 8px 24px rgba(255,105,0,0.2)' // 卡片hover阴影
+                    }
+                }
+            }
+        }
+    </script>
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .mi-container {
+                @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
+            }
+            .mi-card {
+                @apply bg-xiaomi-card rounded-lg border border-xiaomi-border transition-all hover:shadow-mi-hover hover:border-xiaomi-orange/30;
+            }
+            .mi-search-input {
+                @apply bg-xiaomi-dark border border-xiaomi-border rounded-lg px-4 py-2 text-white outline-none focus:border-xiaomi-orange w-full md:w-64;
+            }
+            /* 技术活动页面核心样式 - 修复图层覆盖问题 */
+            .tech-event-card {
+                @apply mi-card rounded-xl overflow-hidden relative h-[400px] cursor-pointer;
+            }
+            /* 卡片正面：默认完全不透明，悬浮时上移+淡出 */
+            .tech-event-card .card-front {
+                @apply w-full h-full absolute z-20 transition-all duration-500 bg-xiaomi-card;
+            }
+            .tech-event-card:hover .card-front {
+                @apply opacity-0 translate-y-[-20px];
+                pointer-events: none; /* 防止遮挡hover事件 */
+            }
+            /* 卡片背面：默认隐藏，悬浮时显示 */
+            .tech-event-card .card-back {
+                @apply w-full h-full absolute z-10 bg-black/95 p-8 flex flex-col justify-center text-white opacity-0 transition-all duration-500;
+            }
+            .tech-event-card:hover .card-back {
+                @apply opacity-100;
+            }
+            /* 其他样式优化 */
+            .tech-event-img {
+                @apply w-full h-[250px] object-cover;
+            }
+            .tech-event-card-title {
+                @apply text-xl font-bold text-white p-6 border-b border-xiaomi-border;
+            }
+            .tech-event-card-subtitle {
+                @apply text-xiaomi-grayDark text-sm mt-1;
+            }
+            .back-title {
+                @apply text-2xl font-bold mb-4 text-xiaomi-orange;
+            }
+            .back-desc {
+                @apply text-gray-300 leading-relaxed mb-6;
+            }
+            .back-feature li {
+                @apply flex items-start gap-2 mb-2 text-sm text-gray-400;
+            }
+            .back-feature li i {
+                @apply text-xiaomi-orange mt-1;
+            }
+            /* 外部链接标识 */
+            .external-link {
+                pointer-events: auto !important;
+                cursor: pointer !important;
+            }
+            /* 图片容器兜底样式（核心修复） */
+            .img-container {
+                @apply w-full h-[250px] bg-xiaomi-dark flex items-center justify-center;
+            }
+            .img-placeholder {
+                @apply flex flex-col items-center justify-center text-xiaomi-grayDark;
+            }
+        }
+    </style>
+    <style>
+        /* 基础样式重置 */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            background-color: #000 !important;
+            color: #fff !important;
+            font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif;
+            scroll-behavior: smooth;
+        }
+        /* 滚动条样式 */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #111;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #FF6900;
+            border-radius: 3px;
+        }
+        /* 导航栏滚动效果 */
+        .nav-scrolled {
+            background-color: rgba(0,0,0,0.95) !important;
+            backdrop-filter: blur(8px);
+            border-bottom: 1px solid #333;
+        }
+        /* 强制图片显示样式 */
+        img {
+            display: block !important;
+            width: 100% !important;
+            height: 100% !important;
+            object-fit: cover !important;
+            opacity: 1 !important;
+        }
+    </style>
+</head>
+<body>
+    <!-- 导航栏（修复所有跳转路径） -->
+    <nav id="mi-nav" class="fixed w-full z-50 py-4 bg-black/80 backdrop-blur-md transition-all duration-300">
+        <div class="mi-container flex justify-between items-center">
+            <!-- LOGO -->
+            <a href="index.html" class="flex items-center gap-2">
+                <div class="w-8 h-8 rounded-full bg-xiaomi-orange flex items-center justify-center">
+                    <i class="fa fa-microchip text-white text-sm"></i>
+                </div>
+                <span class="text-xl font-bold">小米技术</span>
+            </a>
+
+            <!-- 桌面端导航（统一全站跳转路径） -->
+            <div class="hidden md:flex items-center gap-8">
+                <a href="index.html" class="text-sm hover:text-xiaomi-orange transition-colors">首页</a>
+                <a href="tech.html" class="text-sm hover:text-xiaomi-orange transition-colors">技术布局</a>
+                <a href="papers.html" class="text-sm hover:text-xiaomi-orange transition-colors">博客&论文</a>
+                <a href="opensource.html" class="text-sm hover:text-xiaomi-orange transition-colors">开源生态</a>
+                <a href="tech-event.html" class="text-sm text-xiaomi-orange transition-colors">技术活动</a>
+                <a href="https://utc.xiaomi.com/home" target="_blank" class="text-sm hover:text-xiaomi-orange transition-colors external-link">高校合作</a>
+                <a href="industry.html" class="text-sm hover:text-xiaomi-orange transition-colors">行业引领</a>
+                <!-- 搜索框 -->
+                <div class="relative">
+                    <input type="text" class="mi-search-input pr-8" placeholder="搜索技术动态...">
+                    <i class="fa fa-search absolute right-3 top-1/2 -translate-y-1/2 text-xiaomi-grayDark"></i>
+                </div>
+            </div>
+
+            <!-- 移动端菜单按钮 -->
+            <button id="menu-btn" class="md:hidden text-white text-xl">
+                <i class="fa fa-bars"></i>
+            </button>
+        </div>
+
+        <!-- 移动端导航菜单（修复跳转路径） -->
+        <div id="mobile-menu" class="md:hidden hidden bg-xiaomi-dark border-t border-xiaomi-border">
+            <div class="mi-container py-4 flex flex-col gap-4">
+                <div class="relative">
+                    <input type="text" class="mi-search-input pr-8" placeholder="搜索技术动态...">
+                    <i class="fa fa-search absolute right-3 top-1/2 -translate-y-1/2 text-xiaomi-grayDark"></i>
+                </div>
+                <a href="index.html" class="py-2 hover:text-xiaomi-orange transition-colors">首页</a>
+                <a href="tech.html" class="py-2 hover:text-xiaomi-orange transition-colors">技术布局</a>
+                <a href="papers.html" class="py-2 hover:text-xiaomi-orange transition-colors">博客&论文</a>
+                <a href="opensource.html" class="py-2 hover:text-xiaomi-orange transition-colors">开源生态</a>
+                <a href="tech-event.html" class="py-2 text-xiaomi-orange transition-colors">技术活动</a>
+                <a href="https://utc.xiaomi.com/home" target="_blank" class="py-2 hover:text-xiaomi-orange transition-colors external-link">高校合作</a>
+                <a href="industry.html" class="py-2 hover:text-xiaomi-orange transition-colors">行业引领</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Banner区域 -->
+    <section class="pt-32 pb-20 bg-xiaomi-dark relative">
+        <div class="mi-container relative z-10">
+            <h1 class="text-[clamp(2rem,5vw,3.5rem)] font-bold mb-6">技术活动</h1>
+            <p class="text-lg max-w-4xl text-xiaomi-grayDark">
+                小米通过多元化的技术活动，汇聚全球创新力量，<br>激励技术探索与实践，推动行业共同发展
+            </p>
+        </div>
+    </section>
+
+    <!-- 核心内容区 -->
+    <section class="py-16 bg-black">
+        <div class="mi-container">
+            <h2 class="text-3xl font-bold mb-16 text-white text-center">小米核心技术活动矩阵</h2>
+            
+            <!-- 活动卡片：三列布局 -->
+            <div class="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+                <!-- 卡片1：千万技术大奖（使用稳定图片源+容器兜底） -->
+                <div class="tech-event-card">
+                    <!-- 卡片正面（默认显示） -->
+                    <div class="card-front">
+                        <div class="img-container">
+                            <img 
+                                src="https://img.icons8.com/fluency/960/null/artificial-intelligence.png" 
+                                alt="千万技术大奖" 
+                                class="tech-event-img"
+                                onerror="this.parentNode.innerHTML='<div class=\'img-placeholder\'><i class=\'fa fa-trophy text-4xl mb-2 text-xiaomi-orange\'></i><span>千万技术大奖</span></div>'"
+                            >
+                        </div>
+                        <div class="tech-event-card-title">
+                            千万技术大奖
+                            <div class="tech-event-card-subtitle">激励前沿技术创新突破</div>
+                        </div>
+                    </div>
+                    <!-- 卡片背面（悬浮显示） -->
+                    <div class="card-back">
+                        <h4 class="back-title">千万技术大奖</h4>
+                        <p class="back-desc">
+                            小米设立千万级技术大奖，面向全球开发者、科研机构和高校团队，聚焦AI、具身智能、芯片、操作系统等核心技术领域，奖励具有突破性、前瞻性的技术创新成果，加速前沿技术落地应用。
+                        </p>
+                        <ul class="back-feature">
+                            <li><i class="fa fa-check-circle"></i> 单项目最高奖励1000万元</li>
+                            <li><i class="fa fa-check-circle"></i> 覆盖四大核心技术方向</li>
+                            <li><i class="fa fa-check-circle"></i> 开放小米技术生态资源支持</li>
+                            <li><i class="fa fa-check-circle"></i> 每年评选一次，永久设立</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- 卡片2：黑客马拉松（使用稳定图片源+容器兜底） -->
+                <div class="tech-event-card">
+                    <div class="card-front">
+                        <div class="img-container">
+                            <img 
+                                src="https://img.icons8.com/fluency/960/null/hacker.png" 
+                                alt="黑客马拉松" 
+                                class="tech-event-img"
+                                onerror="this.parentNode.innerHTML='<div class=\'img-placeholder\'><i class=\'fa fa-code text-4xl mb-2 text-xiaomi-orange\'></i><span>黑客马拉松</span></div>'"
+                            >
+                        </div>
+                        <div class="tech-event-card-title">
+                            黑客马拉松
+                            <div class="tech-event-card-subtitle">48小时极限技术创新挑战</div>
+                        </div>
+                    </div>
+                    <div class="card-back">
+                        <h4 class="back-title">黑客马拉松</h4>
+                        <p class="back-desc">
+                            小米黑客马拉松是面向全球开发者的48小时极限创新挑战赛，聚焦人车家全生态场景，鼓励开发者基于小米开放平台和技术能力，快速打造创新应用和解决方案，激发技术创新活力。
+                        </p>
+                        <ul class="back-feature">
+                            <li><i class="fa fa-check-circle"></i> 48小时全封闭沉浸式开发</li>
+                            <li><i class="fa fa-check-circle"></i> 聚焦人车家全生态场景</li>
+                            <li><i class="fa fa-check-circle"></i> 提供小米全平台技术支持</li>
+                            <li><i class="fa fa-check-circle"></i> 优秀项目可落地小米产品</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- 卡片3：1024技术嘉年华（终极修复 - 图标+文字兜底） -->
+                <div class="tech-event-card">
+                    <div class="card-front">
+                        <div class="img-container">
+                            <img 
+                                src="https://img.icons8.com/fluency/960/null/programming.png" 
+                                alt="1024技术嘉年华" 
+                                class="tech-event-img"
+                                onerror="this.parentNode.innerHTML='<div class=\'img-placeholder\'><i class=\'fa fa-laptop-code text-4xl mb-2 text-xiaomi-orange\'></i><span>1024技术嘉年华</span></div>'"
+                            >
+                        </div>
+                        <div class="tech-event-card-title">
+                            1024技术嘉年华
+                            <div class="tech-event-card-subtitle">小米技术人的年度盛会</div>
+                        </div>
+                    </div>
+                    <div class="card-back">
+                        <h4 class="back-title">1024技术嘉年华</h4>
+                        <p class="back-desc">
+                            1024程序员节之际举办的小米技术嘉年华，是小米技术人的年度盛会，汇聚内部技术专家和外部行业大咖，通过技术分享、成果展示、互动体验等形式，交流技术前沿趋势，分享小米技术实践经验。
+                        </p>
+                        <ul class="back-feature">
+                            <li><i class="fa fa-check-circle"></i> 覆盖AI、芯片、OS等全技术领域</li>
+                            <li><i class="fa fa-check-circle"></i> 内部技术成果对外首次曝光</li>
+                            <li><i class="fa fa-check-circle"></i> 线上线下同步直播互动</li>
+                            <li><i class="fa fa-check-circle"></i> 面向开发者开放技术交流</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 页脚（统一全站样式） -->
+    <footer class="bg-xiaomi-dark border-t border-xiaomi-border py-10">
+        <div class="mi-container">
+            <div class="flex justify-center items-center gap-2 mb-8">
+                <div class="w-8 h-8 rounded-full bg-xiaomi-orange flex items-center justify-center">
+                    <i class="fa fa-microchip text-white text-sm"></i>
+                </div>
+                <span class="text-xl font-bold">小米技术</span>
+            </div>
+
+            <div class="max-w-md mx-auto mb-8">
+                <h3 class="text-center font-medium mb-6">Follow us 关注我们</h3>
+                <div class="grid grid-cols-2 gap-8">
+                    <div class="text-center">
+                        <div class="w-32 h-32 bg-white rounded-lg mx-auto flex items-center justify-center mb-2">
+                            <span class="text-xiaomi-dark text-sm">微信二维码</span>
+                        </div>
+                        <p class="text-xiaomi-grayDark text-sm">小米技术公众号</p>
+                    </div>
+                    <div class="text-center">
+                        <div class="w-32 h-32 bg-white rounded-lg mx-auto flex items-center justify-center mb-2">
+                            <span class="text-xiaomi-dark text-sm">微博二维码</span>
+                        </div>
+                        <p class="text-xiaomi-grayDark text-sm">小米技术官方微博</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="text-center">
+                <p class="text-xiaomi-grayDark text-xs">© 2025 小米集团 保留所有权利</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- 交互脚本（优化+修复） -->
+    <script>
+        // 导航栏滚动效果
+        const nav = document.getElementById('mi-nav');
+        window.addEventListener('scroll', () => {
+            nav.classList.toggle('nav-scrolled', window.scrollY > 50);
+        });
+
+        // 移动端菜单切换
+        const menuBtn = document.getElementById('menu-btn');
+        const mobileMenu = document.getElementById('mobile-menu');
+        menuBtn.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+            const icon = menuBtn.querySelector('i');
+            if (icon.classList.contains('fa-bars')) {
+                icon.classList.replace('fa-bars', 'fa-times');
+            } else {
+                icon.classList.replace('fa-times', 'fa-bars');
+            }
+        });
+
+        // 移动端菜单点击关闭（排除外部链接）
+        mobileMenu.querySelectorAll('a').forEach(link => {
+            link.addEventListener('click', () => {
+                if (!link.classList.contains('external-link')) {
+                    mobileMenu.classList.add('hidden');
+                    menuBtn.querySelector('i').classList.replace('fa-times', 'fa-bars');
+                }
+            });
+        });
+
+        // 强制初始化图片显示状态
+        document.addEventListener('DOMContentLoaded', function() {
+            document.querySelectorAll('img').forEach(img => {
+                img.style.opacity = '1';
+                // 主动触发图片加载检查
+                if (!img.complete) {
+                    img.onerror();
+                }
+            });
+        });
+    </script>
+</body>
+</html>
